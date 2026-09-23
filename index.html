@@ -1,0 +1,1294 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="國語評量無障礙自學工具，包含朗讀、放大、高對比、答案解析與國字筆順。">
+  <title>國語評量｜無障礙自學助手</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e365b'/%3E%3Cpath d='M17 12h30v40H17z' fill='%23fffdf7'/%3E%3Cpath d='M24 24h16M24 33h16M24 42h10' stroke='%23c83c32' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --page: #eef2f5;
+      --paper: #fffef9;
+      --surface: #ffffff;
+      --ink: #142033;
+      --muted: #526071;
+      --navy: #0e365b;
+      --navy-2: #174e7d;
+      --blue-soft: #e7f0f8;
+      --red: #c83c32;
+      --red-dark: #96281f;
+      --red-soft: #fff0ed;
+      --gold: #f1b940;
+      --green: #1d6a50;
+      --green-soft: #e8f5ef;
+      --border: #c9d1db;
+      --focus: #f3b61f;
+      --shadow: 0 13px 34px rgba(14, 54, 91, .11);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(14,54,91,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(14,54,91,.035) 1px, transparent 1px),
+        var(--page);
+      background-size: 30px 30px;
+      font-family: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    body.high-contrast {
+      --page: #000;
+      --paper: #000;
+      --surface: #000;
+      --ink: #fff;
+      --muted: #fff;
+      --navy: #000;
+      --navy-2: #000;
+      --blue-soft: #171717;
+      --red: #ffef3d;
+      --red-dark: #ffef3d;
+      --red-soft: #242400;
+      --gold: #ffef3d;
+      --green: #84ffc9;
+      --green-soft: #002f22;
+      --border: #fff;
+      --focus: #00eaff;
+      background: #000;
+    }
+
+    button, select { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; }
+
+    .skip-link {
+      position: fixed;
+      top: 8px;
+      left: 8px;
+      z-index: 100;
+      padding: 10px 14px;
+      color: #000;
+      background: #ffef3d;
+      border: 3px solid #000;
+      transform: translateY(-160%);
+    }
+    .skip-link:focus { transform: translateY(0); }
+
+    :focus-visible {
+      outline: 4px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .access-bar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      color: #fff;
+      background: var(--navy);
+      border-bottom: 4px solid var(--gold);
+      box-shadow: 0 6px 18px rgba(0,0,0,.18);
+    }
+
+    .access-inner {
+      width: min(1240px, calc(100% - 28px));
+      min-height: 68px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 10px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: max-content;
+      font-weight: 800;
+      letter-spacing: .05em;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      color: #fff;
+      background: var(--red);
+      border: 2px solid currentColor;
+      border-radius: 11px;
+      font-family: "Kaiti TC", "BiauKai", serif;
+      font-size: 1.4rem;
+    }
+
+    .access-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 7px;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px;
+      background: rgba(255,255,255,.1);
+      border-radius: 11px;
+    }
+
+    .a11y-button, .button, .section-link, .segment-button, .char-chip {
+      min-height: 46px;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 750;
+      transition: transform .15s ease, background .15s ease, color .15s ease;
+    }
+
+    .a11y-button {
+      min-width: 46px;
+      padding: 7px 11px;
+      color: #fff;
+      background: transparent;
+      border-color: rgba(255,255,255,.45);
+    }
+    .a11y-button:hover, .a11y-button[aria-pressed="true"] {
+      color: #000;
+      background: #ffef3d;
+      border-color: #ffef3d;
+    }
+
+    #zoomValue { min-width: 62px; text-align: center; font-weight: 800; }
+
+    .app-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 26px 0 56px;
+    }
+
+    .intro {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 18px;
+      padding: 25px 28px;
+      color: #fff;
+      background: var(--navy);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    body.high-contrast .intro, body.high-contrast .access-bar, body.high-contrast .stroke-panel {
+      border: 2px solid #fff;
+    }
+
+    body.high-contrast .button,
+    body.high-contrast .section-link,
+    body.high-contrast .segment-button,
+    body.high-contrast .idiom-chip {
+      color: #fff;
+      background: #000;
+      border-color: #fff;
+    }
+    body.high-contrast .button:hover,
+    body.high-contrast .button.primary,
+    body.high-contrast .section-link:hover,
+    body.high-contrast .segment-button:hover,
+    body.high-contrast .segment-button.speaking {
+      color: #000;
+      background: #ffef3d;
+      border-color: #ffef3d;
+    }
+    body.high-contrast .answer-slot {
+      color: #fff;
+      background: #000;
+      border-color: #fff;
+      box-shadow: none;
+    }
+    body.high-contrast .answer-slot.revealed {
+      color: #ffef3d;
+      background: #242400;
+      border-color: #ffef3d;
+      box-shadow: none;
+    }
+    body.high-contrast .answer-slot.revealed .answer,
+    body.high-contrast .answer-slot.correction .prompt,
+    body.high-contrast .section-heading h2,
+    body.high-contrast .section-count,
+    body.high-contrast details.analysis > summary {
+      color: #ffef3d;
+    }
+    body.high-contrast .question-card,
+    body.high-contrast .study-toolbar,
+    body.high-contrast details.analysis,
+    body.high-contrast .idiom-bank {
+      border-color: #fff;
+      box-shadow: none;
+    }
+
+    h1, h2, h3 { margin-top: 0; line-height: 1.3; }
+    h1 {
+      margin-bottom: 8px;
+      font-family: "Kaiti TC", "BiauKai", "PingFang TC", serif;
+      font-size: clamp(1.8rem, 4vw, 2.65rem);
+      letter-spacing: .06em;
+    }
+    .intro p { margin: 0; color: rgba(255,255,255,.83); }
+    .progress-box {
+      min-width: 170px;
+      padding: 15px 20px;
+      text-align: center;
+      background: rgba(255,255,255,.12);
+      border: 2px solid rgba(255,255,255,.25);
+      border-radius: 16px;
+    }
+    .progress-label { display: block; font-size: .85rem; }
+    .progress-number { display: block; font-size: 1.55rem; font-weight: 900; }
+
+    .study-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      color: var(--ink);
+      background: var(--paper);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+    }
+    .study-toolbar p { margin: 0; }
+    .study-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 8px 14px;
+      color: var(--navy);
+      background: var(--surface);
+      border-color: var(--border);
+    }
+    .button:hover { color: #fff; background: var(--navy-2); border-color: var(--navy-2); }
+    .button.primary { color: #fff; background: var(--red); border-color: var(--red); }
+    .button.primary:hover { background: var(--red-dark); border-color: var(--red-dark); }
+    .button:active, .a11y-button:active, .segment-button:active, .answer-slot:active { transform: translateY(1px); }
+
+    .section-nav {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 26px;
+    }
+    .section-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 58px;
+      padding: 10px 14px;
+      color: var(--navy);
+      background: var(--surface);
+      border-color: var(--border);
+      text-decoration: none;
+      text-align: center;
+    }
+    .section-link:hover { color: #fff; background: var(--navy); border-color: var(--navy); }
+
+    .section-block { scroll-margin-top: 92px; margin-top: 34px; }
+    .section-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 4px solid var(--navy);
+    }
+    .section-heading h2 { margin: 0; color: var(--navy); font-size: clamp(1.45rem, 3vw, 2rem); }
+    .section-heading p { max-width: 680px; margin: 3px 0 0; color: var(--muted); }
+    .section-count { white-space: nowrap; color: var(--red-dark); font-weight: 800; }
+
+    .section-one-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 310px;
+      align-items: start;
+      gap: 20px;
+    }
+
+    .question-list { display: grid; gap: 18px; }
+    .question-card {
+      position: relative;
+      overflow: hidden;
+      padding: 22px 24px;
+      color: var(--ink);
+      background: var(--paper);
+      border: 2px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 8px 24px rgba(14,54,91,.07);
+    }
+    .question-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 6px;
+      background: var(--red);
+    }
+
+    .question-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .question-title { display: flex; align-items: baseline; gap: 10px; }
+    .question-number {
+      color: var(--red-dark);
+      font-family: Georgia, serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+    }
+    .question-tip { color: var(--muted); font-size: .88rem; }
+
+    .sentence {
+      margin: 0 0 18px;
+      font-family: "Kaiti TC", "BiauKai", "PingFang TC", serif;
+      font-size: clamp(1.3rem, 2.3vw, 1.7rem);
+      line-height: 2.2;
+      letter-spacing: .02em;
+    }
+
+    .answer-slot {
+      position: relative;
+      display: inline-grid;
+      place-items: center;
+      min-width: 3em;
+      min-height: 2.65em;
+      margin: 0 .1em;
+      padding: .18em .42em;
+      vertical-align: middle;
+      color: var(--navy);
+      background: var(--surface);
+      border: 3px solid var(--navy);
+      border-radius: 8px;
+      box-shadow: 3px 3px 0 rgba(14,54,91,.17);
+      font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
+      line-height: 1.12;
+      cursor: pointer;
+    }
+    .answer-slot:hover { transform: translateY(-2px); }
+    .answer-slot .prompt { display: block; font-size: .72em; font-weight: 800; white-space: nowrap; }
+    .answer-slot[data-kind="reading"] .prompt { font-family: "Kaiti TC", "BiauKai", serif; font-size: 1em; }
+    .answer-slot .answer { display: none; color: var(--red-dark); font-weight: 900; }
+    .answer-slot.revealed {
+      min-width: 3.45em;
+      min-height: 3em;
+      padding: .22em .48em;
+      color: var(--red-dark);
+      background: var(--red-soft);
+      border-color: var(--red);
+      box-shadow: 3px 3px 0 rgba(200,60,50,.18);
+    }
+    .answer-slot.revealed .prompt {
+      color: var(--muted);
+      font-size: .6em;
+      line-height: 1.05;
+      text-decoration: none;
+    }
+    .answer-slot.revealed .answer {
+      display: block;
+      font-size: 1.18em;
+      line-height: 1.08;
+      animation: answer-in .3s ease both;
+    }
+    .answer-slot.revealed[data-kind="reading"] .answer { font-size: .82em; white-space: nowrap; }
+    .answer-slot.revealed[data-kind="character"] .answer { font-family: "Kaiti TC", "BiauKai", serif; font-size: 1.38em; }
+
+    .answer-slot.correction .prompt { font-size: 1em; color: var(--red-dark); }
+    .answer-slot.correction.revealed .prompt { text-decoration: line-through; }
+    .answer-slot.correction .answer { font-family: "Kaiti TC", "BiauKai", serif; font-size: 1.36em; }
+    .answer-slot.idiom { min-width: 7.4em; }
+    .answer-slot.idiom.revealed { min-width: 8.6em; }
+    .answer-slot.idiom .prompt { color: var(--muted); font-family: inherit; font-size: .62em; }
+    .answer-slot.idiom .answer { font-size: .96em; white-space: nowrap; }
+
+    @keyframes answer-in {
+      from { opacity: 0; transform: scale(.72); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .segment-wrap { margin-top: 12px; }
+    .segment-label { display: block; margin-bottom: 7px; color: var(--muted); font-size: .82rem; font-weight: 800; }
+    .segments { display: flex; flex-wrap: wrap; gap: 7px; }
+    .segment-button {
+      min-height: 44px;
+      padding: 7px 11px;
+      color: var(--ink);
+      background: var(--blue-soft);
+      border-color: var(--border);
+    }
+    .segment-button:hover, .segment-button.speaking { color: #fff; background: var(--red); border-color: var(--red); }
+
+    details.analysis {
+      margin-top: 18px;
+      background: var(--blue-soft);
+      border: 2px solid var(--border);
+      border-radius: 13px;
+    }
+    details.analysis > summary {
+      min-height: 48px;
+      padding: 10px 14px;
+      cursor: pointer;
+      color: var(--navy);
+      font-weight: 850;
+    }
+    .analysis-body { padding: 0 15px 16px; }
+    .analysis-body p { margin: 8px 0; }
+    .analysis-body ul { margin: 8px 0; padding-left: 1.35em; }
+    .analysis-body li + li { margin-top: 5px; }
+    .strategy {
+      padding: 10px 12px;
+      color: var(--green);
+      background: var(--green-soft);
+      border-left: 5px solid var(--green);
+      border-radius: 7px;
+      font-weight: 700;
+    }
+    .answer-line { color: var(--red-dark); font-weight: 850; }
+
+    .stroke-panel {
+      position: sticky;
+      top: 88px;
+      padding: 19px;
+      color: #fff;
+      background: var(--navy);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+    .stroke-panel h3 { margin: 2px 0 12px; font-size: 1.25rem; }
+    .stroke-reading { color: #ffd4ce; font-size: .95rem; }
+    .stroke-stage {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      aspect-ratio: 1;
+      overflow: hidden;
+      background:
+        linear-gradient(45deg, transparent 49.5%, rgba(200,60,50,.23) 50%, transparent 50.5%),
+        linear-gradient(-45deg, transparent 49.5%, rgba(200,60,50,.23) 50%, transparent 50.5%),
+        linear-gradient(90deg, transparent 49.5%, rgba(200,60,50,.23) 50%, transparent 50.5%),
+        linear-gradient(transparent 49.5%, rgba(200,60,50,.23) 50%, transparent 50.5%),
+        #fffef9;
+      border: 3px solid #fff;
+      border-radius: 13px;
+    }
+    #strokeCanvas { display: grid; place-items: center; width: 100%; height: 100%; }
+    #strokeCanvas svg { max-width: 100%; max-height: 100%; }
+    .fallback-char {
+      color: #96281f;
+      font-family: "Kaiti TC", "BiauKai", serif;
+      font-size: 7rem;
+      line-height: 1;
+    }
+    .stroke-status { min-height: 3.2em; margin: 10px 0; color: rgba(255,255,255,.82); font-size: .82rem; }
+    .stroke-panel .button { width: 100%; }
+    .char-picker {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .char-chip {
+      display: grid;
+      place-items: center;
+      min-width: 0;
+      aspect-ratio: 1;
+      color: #fff;
+      background: rgba(255,255,255,.1);
+      border-color: rgba(255,255,255,.35);
+      font-family: "Kaiti TC", "BiauKai", serif;
+      font-size: 1.15rem;
+    }
+    .char-chip:hover, .char-chip.active { color: #000; background: #ffef3d; border-color: #ffef3d; }
+
+    .correction-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .correction-list .question-card { min-height: 100%; }
+    .correction-list .sentence { font-size: clamp(1.2rem, 2vw, 1.5rem); }
+
+    .idiom-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin: 0 0 16px;
+      padding: 14px;
+      background: var(--blue-soft);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+    }
+    .idiom-chip {
+      padding: 7px 11px;
+      color: var(--navy);
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 999px;
+      font-weight: 750;
+    }
+
+    .meaning-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 18px;
+      margin-top: 10px;
+    }
+    .meaning-grid p { margin: 0; }
+
+    .footer-note {
+      margin: 32px 0 0;
+      padding-top: 16px;
+      color: var(--muted);
+      border-top: 2px solid var(--border);
+      text-align: center;
+      font-size: .84rem;
+    }
+
+    .live-status {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      z-index: 50;
+      max-width: min(90vw, 540px);
+      padding: 11px 17px;
+      color: #fff;
+      background: #101820;
+      border: 2px solid #fff;
+      border-radius: 11px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.25);
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 12px);
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .live-status.show { opacity: 1; transform: translate(-50%, 0); }
+
+    body.zoomed .section-one-layout { grid-template-columns: 1fr; }
+    body.zoomed .stroke-panel { position: static; max-width: 440px; }
+    body.zoomed .correction-list, body.zoomed .meaning-grid { grid-template-columns: 1fr; }
+
+    @media (max-width: 900px) {
+      .access-inner { align-items: flex-start; flex-direction: column; }
+      .access-controls { justify-content: flex-start; width: 100%; }
+      .access-bar { position: static; }
+      .section-one-layout { grid-template-columns: 1fr; }
+      .stroke-panel { position: static; }
+      .stroke-stage { max-width: 300px; margin: 0 auto; }
+      .correction-list { grid-template-columns: 1fr; }
+      .section-block { scroll-margin-top: 16px; }
+    }
+
+    @media (max-width: 650px) {
+      .access-inner, .app-shell { width: min(100% - 20px, 620px); }
+      .brand { width: 100%; }
+      .control-group { flex-wrap: wrap; }
+      .intro { grid-template-columns: 1fr; padding: 20px; }
+      .progress-box { width: 100%; }
+      .study-toolbar, .section-heading { align-items: flex-start; flex-direction: column; }
+      .study-actions { width: 100%; }
+      .study-actions .button { flex: 1; }
+      .section-nav { grid-template-columns: 1fr; }
+      .question-card { padding: 20px 15px; }
+      .question-head { align-items: flex-start; }
+      .question-head .button .wide-label { display: none; }
+      .sentence { line-height: 2.35; }
+      .segments { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .segment-button { width: 100%; }
+      .meaning-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 390px) {
+      .access-controls { display: grid; grid-template-columns: 1fr; }
+      .control-group { width: 100%; }
+      .a11y-button { flex: 1; }
+      .segments { grid-template-columns: 1fr; }
+      .char-picker { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+
+    @media print {
+      body { background: #fff; color: #000; }
+      .access-bar, .study-toolbar, .section-nav, .segments, .stroke-panel, .live-status { display: none !important; }
+      .app-shell { width: 100%; padding: 0; }
+      .intro { color: #000; background: #fff; border: 2px solid #000; box-shadow: none; }
+      .intro p { color: #000; }
+      .question-card { break-inside: avoid; box-shadow: none; }
+      .correction-list { display: block; }
+      .correction-list .question-card { margin-bottom: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">跳到主要題目</a>
+
+  <header class="access-bar" aria-label="無障礙閱讀工具">
+    <div class="access-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">學</span>
+        <span>國語自學助手</span>
+      </div>
+      <div class="access-controls">
+        <div class="control-group" aria-label="語音控制">
+          <button class="a11y-button" id="readPage" type="button">朗讀本頁</button>
+          <button class="a11y-button" id="stopSpeech" type="button">停止朗讀</button>
+        </div>
+        <div class="control-group" aria-label="字體大小">
+          <button class="a11y-button" id="zoomOut" type="button" aria-label="縮小字體">A－</button>
+          <span id="zoomValue" aria-live="polite">100%</span>
+          <button class="a11y-button" id="zoomIn" type="button" aria-label="放大字體">A＋</button>
+          <button class="a11y-button" id="maxZoom" type="button" aria-label="切換百分之二百超大字">超大字</button>
+        </div>
+        <div class="control-group">
+          <button class="a11y-button" id="contrastToggle" type="button" aria-pressed="false">高對比</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-shell" id="mainContent">
+    <section class="intro" aria-labelledby="pageTitle">
+      <div>
+        <h1 id="pageTitle">國語評量・解題自學</h1>
+        <p>依照兩張考卷圖片重製。先思考，再點答案格；需要協助時可展開提示與解析。</p>
+      </div>
+      <div class="progress-box" aria-live="polite">
+        <span class="progress-label">已核對答案</span>
+        <span class="progress-number"><span id="progressDone">0</span>／<span id="progressTotal">32</span></span>
+      </div>
+    </section>
+
+    <section class="study-toolbar" aria-label="學習控制">
+      <p><strong>自學順序：</strong>聽題目 → 自己想 → 點格子核對 → 看解析。</p>
+      <div class="study-actions">
+        <button class="button" id="revealAll" type="button">顯示全部答案</button>
+        <button class="button" id="resetQuiz" type="button">重新練習</button>
+      </div>
+    </section>
+
+    <nav class="section-nav" aria-label="題型導覽">
+      <a class="section-link" href="#section-one">一、國字注音</a>
+      <a class="section-link" href="#section-two">二、改錯字</a>
+      <a class="section-link" href="#section-three">三、選成語</a>
+    </nav>
+
+    <section class="section-block" id="section-one" aria-labelledby="sectionOneTitle">
+      <div class="section-heading">
+        <div>
+          <h2 id="sectionOneTitle">一、國字注音</h2>
+          <p>看國字寫注音；看注音寫國字。遇到破音字時，要先讀完整個詞語。</p>
+        </div>
+        <span class="section-count">20 個答案</span>
+      </div>
+
+      <div class="section-one-layout">
+        <div class="question-list">
+          <article class="question-card">
+            <div class="question-head">
+              <div class="question-title"><span class="question-number">1.</span><span class="question-tip">先找出四個固定詞語</span></div>
+              <button class="button speak" type="button" data-speech="他今天一直露出愁眉苦臉的表情，也時常唉聲嘆氣，大家都在擔心他到底怎麼了？"><span aria-hidden="true">🔊</span><span class="wide-label">朗讀題目</span></button>
+            </div>
+            <p class="sentence">
+              他今天一直
+              <button class="answer-slot" type="button" data-kind="reading" data-answer="ㄌㄨˋ" data-char="露" data-reading="ㄌㄨˋ" aria-label="露的注音，點擊顯示答案"><span class="prompt">露</span><span class="answer">ㄌㄨˋ</span></button>出
+              <button class="answer-slot" type="button" data-kind="character" data-answer="愁" data-char="愁" data-reading="ㄔㄡˊ" aria-label="注音ㄔㄡˊ的國字，點擊顯示答案"><span class="prompt">ㄔㄡˊ</span><span class="answer">愁</span></button>眉苦臉的表情，也時常唉聲
+              <button class="answer-slot" type="button" data-kind="character" data-answer="嘆" data-char="嘆" data-reading="ㄊㄢˋ" aria-label="注音ㄊㄢˋ的國字，點擊顯示答案"><span class="prompt">ㄊㄢˋ</span><span class="answer">嘆</span></button>氣，大家都在
+              <button class="answer-slot" type="button" data-kind="character" data-answer="擔" data-char="擔" data-reading="ㄉㄢ" aria-label="注音ㄉㄢ的國字，點擊顯示答案"><span class="prompt">ㄉㄢ</span><span class="answer">擔</span></button>心他到底怎麼了？
+            </p>
+            <div class="segment-wrap">
+              <span class="segment-label">分段朗讀</span>
+              <div class="segments">
+                <button class="segment-button speak" type="button" data-speech="他今天一直露出愁眉苦臉的表情">第 1 段</button>
+                <button class="segment-button speak" type="button" data-speech="也時常唉聲嘆氣">第 2 段</button>
+                <button class="segment-button speak" type="button" data-speech="大家都在擔心他">第 3 段</button>
+                <button class="segment-button speak" type="button" data-speech="到底怎麼了">第 4 段</button>
+              </div>
+            </div>
+            <details class="analysis">
+              <summary>提示與解題解析</summary>
+              <div class="analysis-body">
+                <p class="strategy">解題方法：先把空格和前後的字合成詞，再判斷要寫國字還是注音。</p>
+                <ul>
+                  <li><strong>露出</strong>是顯現出來；「露」在這裡讀「ㄌㄨˋ」。</li>
+                  <li><strong>愁眉苦臉</strong>形容憂愁、不開心的表情。</li>
+                  <li><strong>唉聲嘆氣</strong>是因煩惱而嘆息；不能寫成「歎」。</li>
+                  <li><strong>擔心</strong>指掛念、放心不下；「擔」在這裡讀「ㄉㄢ」。</li>
+                </ul>
+                <p class="answer-line">答案：露－ㄌㄨˋ；ㄔㄡˊ－愁；ㄊㄢˋ－嘆；ㄉㄢ－擔。</p>
+                <button class="button speak" type="button" data-speech="第一題解析。露出，是顯現出來。愁眉苦臉，形容憂愁不開心。唉聲嘆氣，是因煩惱而嘆息。擔心，是掛念、放心不下。">朗讀解析</button>
+              </div>
+            </details>
+          </article>
+
+          <article class="question-card">
+            <div class="question-head">
+              <div class="question-title"><span class="question-number">2.</span><span class="question-tip">注意「載」的讀音</span></div>
+              <button class="button speak" type="button" data-speech="俗話說馬路如虎口，特別是騎機車載人的時候更要注意交通安全，慢慢來不要搶，以免遇到危險。"><span aria-hidden="true">🔊</span><span class="wide-label">朗讀題目</span></button>
+            </div>
+            <p class="sentence">
+              俗話說馬路如虎口，特別是騎機車
+              <button class="answer-slot" type="button" data-kind="reading" data-answer="ㄗㄞˋ" data-char="載" data-reading="ㄗㄞˋ" aria-label="載的注音，點擊顯示答案"><span class="prompt">載</span><span class="answer">ㄗㄞˋ</span></button>人的時候更要注意交
+              <button class="answer-slot" type="button" data-kind="character" data-answer="通" data-char="通" data-reading="ㄊㄨㄥ" aria-label="注音ㄊㄨㄥ的國字，點擊顯示答案"><span class="prompt">ㄊㄨㄥ</span><span class="answer">通</span></button>安全，慢慢來不要
+              <button class="answer-slot" type="button" data-kind="character" data-answer="搶" data-char="搶" data-reading="ㄑㄧㄤˇ" aria-label="注音ㄑㄧㄤˇ的國字，點擊顯示答案"><span class="prompt">ㄑㄧㄤˇ</span><span class="answer">搶</span></button>，以免
+              <button class="answer-slot" type="button" data-kind="character" data-answer="遇" data-char="遇" data-reading="ㄩˋ" aria-label="注音ㄩˋ的國字，點擊顯示答案"><span class="prompt">ㄩˋ</span><span class="answer">遇</span></button>到危險。
+            </p>
+            <div class="segment-wrap">
+              <span class="segment-label">分段朗讀</span>
+              <div class="segments">
+                <button class="segment-button speak" type="button" data-speech="俗話說馬路如虎口">第 1 段</button>
+                <button class="segment-button speak" type="button" data-speech="特別是騎機車載人的時候">第 2 段</button>
+                <button class="segment-button speak" type="button" data-speech="更要注意交通安全">第 3 段</button>
+                <button class="segment-button speak" type="button" data-speech="慢慢來不要搶">第 4 段</button>
+                <button class="segment-button speak" type="button" data-speech="以免遇到危險">第 5 段</button>
+              </div>
+            </div>
+            <details class="analysis">
+              <summary>提示與解題解析</summary>
+              <div class="analysis-body">
+                <p class="strategy">解題方法：破音字要放回詞語。「載人」表示運送、承載人，所以讀四聲。</p>
+                <ul>
+                  <li><strong>載人</strong>的「載」讀「ㄗㄞˋ」；「記載」則讀「ㄗㄞˇ」。</li>
+                  <li><strong>交通安全</strong>是固定用語，「交」後面是「通」。</li>
+                  <li><strong>搶</strong>是爭先、爭奪；搶快容易發生危險。</li>
+                  <li><strong>遇到</strong>表示碰上某件事。</li>
+                </ul>
+                <p class="answer-line">答案：載－ㄗㄞˋ；ㄊㄨㄥ－通；ㄑㄧㄤˇ－搶；ㄩˋ－遇。</p>
+                <button class="button speak" type="button" data-speech="第二題解析。載人表示承載人，所以載讀四聲。交通安全是固定用語。搶是爭先，遇到表示碰上某件事。">朗讀解析</button>
+              </div>
+            </details>
+          </article>
+
+          <article class="question-card">
+            <div class="question-head">
+              <div class="question-title"><span class="question-number">3.</span><span class="question-tip">先理解「逆水行舟」的比喻</span></div>
+              <button class="button speak" type="button" data-speech="學習好比逆水行舟，可以疲累、可以休息，但千萬不能放棄，只要不斷努力，有朝一日一定會成功。"><span aria-hidden="true">🔊</span><span class="wide-label">朗讀題目</span></button>
+            </div>
+            <p class="sentence">
+              學習好
+              <button class="answer-slot" type="button" data-kind="character" data-answer="比" data-char="比" data-reading="ㄅㄧˇ" aria-label="注音ㄅㄧˇ的國字，點擊顯示答案"><span class="prompt">ㄅㄧˇ</span><span class="answer">比</span></button>逆水行
+              <button class="answer-slot" type="button" data-kind="reading" data-answer="ㄓㄡ" data-char="舟" data-reading="ㄓㄡ" aria-label="舟的注音，點擊顯示答案"><span class="prompt">舟</span><span class="answer">ㄓㄡ</span></button>，可以
+              <button class="answer-slot" type="button" data-kind="character" data-answer="疲" data-char="疲" data-reading="ㄆㄧˊ" aria-label="注音ㄆㄧˊ的國字，點擊顯示答案"><span class="prompt">ㄆㄧˊ</span><span class="answer">疲</span></button>累、可以休息，但千萬不能放棄，只要不斷
+              <button class="answer-slot" type="button" data-kind="character" data-answer="努" data-char="努" data-reading="ㄋㄨˇ" aria-label="注音ㄋㄨˇ的國字，點擊顯示答案"><span class="prompt">ㄋㄨˇ</span><span class="answer">努</span></button>力，有
+              <button class="answer-slot" type="button" data-kind="reading" data-answer="ㄓㄠ" data-char="朝" data-reading="ㄓㄠ" aria-label="朝的注音，點擊顯示答案"><span class="prompt">朝</span><span class="answer">ㄓㄠ</span></button>一日一定會成功。
+            </p>
+            <div class="segment-wrap">
+              <span class="segment-label">分段朗讀</span>
+              <div class="segments">
+                <button class="segment-button speak" type="button" data-speech="學習好比逆水行舟">第 1 段</button>
+                <button class="segment-button speak" type="button" data-speech="可以疲累、可以休息">第 2 段</button>
+                <button class="segment-button speak" type="button" data-speech="但千萬不能放棄">第 3 段</button>
+                <button class="segment-button speak" type="button" data-speech="只要不斷努力，有朝一日一定會成功">第 4 段</button>
+              </div>
+            </div>
+            <details class="analysis">
+              <summary>提示與解題解析</summary>
+              <div class="analysis-body">
+                <p class="strategy">解題方法：把句子拆成「好比、行舟、疲累、努力、有朝一日」五個詞語。</p>
+                <ul>
+                  <li><strong>好比</strong>就是「好像、如同」；<strong>舟</strong>是船。</li>
+                  <li><strong>逆水行舟</strong>比喻不努力前進就容易退步。</li>
+                  <li><strong>疲累</strong>是身體或精神很累；<strong>努力</strong>是盡力去做。</li>
+                  <li><strong>有朝一日</strong>指將來某一天；「朝」在這個詞裡讀「ㄓㄠ」。</li>
+                </ul>
+                <p class="answer-line">答案：ㄅㄧˇ－比；舟－ㄓㄡ；ㄆㄧˊ－疲；ㄋㄨˇ－努；朝－ㄓㄠ。</p>
+                <button class="button speak" type="button" data-speech="第三題解析。學習好比逆水行舟，比喻不努力前進就容易退步。疲累可以休息，但不能放棄。只要努力，將來有一天就可能成功。">朗讀解析</button>
+              </div>
+            </details>
+          </article>
+
+          <article class="question-card">
+            <div class="question-head">
+              <div class="question-title"><span class="question-number">4.</span><span class="question-tip">辨認容易混淆的字</span></div>
+              <button class="button speak" type="button" data-speech="與人交友貴在真誠，如果隨便辜負他人，或是嫉妒他人而不懷好意，必然無法交到好朋友。"><span aria-hidden="true">🔊</span><span class="wide-label">朗讀題目</span></button>
+            </div>
+            <p class="sentence">
+              與人交友
+              <button class="answer-slot" type="button" data-kind="character" data-answer="貴" data-char="貴" data-reading="ㄍㄨㄟˋ" aria-label="注音ㄍㄨㄟˋ的國字，點擊顯示答案"><span class="prompt">ㄍㄨㄟˋ</span><span class="answer">貴</span></button>在真誠，如果隨便
+              <button class="answer-slot" type="button" data-kind="character" data-answer="辜" data-char="辜" data-reading="ㄍㄨ" aria-label="注音ㄍㄨ的國字，點擊顯示答案"><span class="prompt">ㄍㄨ</span><span class="answer">辜</span></button>
+              <button class="answer-slot" type="button" data-kind="reading" data-answer="ㄈㄨˋ" data-char="負" data-reading="ㄈㄨˋ" aria-label="負的注音，點擊顯示答案"><span class="prompt">負</span><span class="answer">ㄈㄨˋ</span></button>他人，或是
+              <button class="answer-slot" type="button" data-kind="character" data-answer="嫉" data-char="嫉" data-reading="ㄐㄧˊ" aria-label="注音ㄐㄧˊ的國字，點擊顯示答案"><span class="prompt">ㄐㄧˊ</span><span class="answer">嫉</span></button>
+              <button class="answer-slot" type="button" data-kind="reading" data-answer="ㄉㄨˋ" data-char="妒" data-reading="ㄉㄨˋ" aria-label="妒的注音，點擊顯示答案"><span class="prompt">妒</span><span class="answer">ㄉㄨˋ</span></button>他人而不
+              <button class="answer-slot" type="button" data-kind="character" data-answer="懷" data-char="懷" data-reading="ㄏㄨㄞˊ" aria-label="注音ㄏㄨㄞˊ的國字，點擊顯示答案"><span class="prompt">ㄏㄨㄞˊ</span><span class="answer">懷</span></button>好意，
+              <button class="answer-slot" type="button" data-kind="character" data-answer="必" data-char="必" data-reading="ㄅㄧˋ" aria-label="注音ㄅㄧˋ的國字，點擊顯示答案"><span class="prompt">ㄅㄧˋ</span><span class="answer">必</span></button>然無法交到好朋友。
+            </p>
+            <div class="segment-wrap">
+              <span class="segment-label">分段朗讀</span>
+              <div class="segments">
+                <button class="segment-button speak" type="button" data-speech="與人交友貴在真誠">第 1 段</button>
+                <button class="segment-button speak" type="button" data-speech="如果隨便辜負他人">第 2 段</button>
+                <button class="segment-button speak" type="button" data-speech="或是嫉妒他人而不懷好意">第 3 段</button>
+                <button class="segment-button speak" type="button" data-speech="必然無法交到好朋友">第 4 段</button>
+              </div>
+            </div>
+            <details class="analysis">
+              <summary>提示與解題解析</summary>
+              <div class="analysis-body">
+                <p class="strategy">解題方法：用詞義串起整句——交朋友重視真誠，不要背叛、嫉妒或心存惡意。</p>
+                <ul>
+                  <li><strong>貴在</strong>表示最重要之處；<strong>辜負</strong>是對不起別人的期待。</li>
+                  <li><strong>嫉妒</strong>是因別人比自己好而心生不滿，兩個字都是女部。</li>
+                  <li><strong>懷好意</strong>的「懷」有心中存有的意思。</li>
+                  <li><strong>必然</strong>表示一定會如此。</li>
+                </ul>
+                <p class="answer-line">答案：貴、辜、ㄈㄨˋ、嫉、ㄉㄨˋ、懷、必。</p>
+                <button class="button speak" type="button" data-speech="第四題解析。交朋友最重要的是真誠。辜負是對不起別人的期待。嫉妒是因別人比自己好而心生不滿。必然表示一定會如此。">朗讀解析</button>
+              </div>
+            </details>
+          </article>
+        </div>
+
+        <aside class="stroke-panel" aria-labelledby="strokeTitle">
+          <span class="segment-label">動畫筆順練習</span>
+          <h3 id="strokeTitle">練習「<span id="activeChar">露</span>」 <span class="stroke-reading" id="activeReading">ㄌㄨˋ</span></h3>
+          <div class="stroke-stage" aria-label="國字筆順動畫區"><div id="strokeCanvas"></div></div>
+          <p class="stroke-status" id="strokeStatus" aria-live="polite">選擇國字後可播放筆順。首次載入字形需要網路。</p>
+          <button class="button primary" id="playStroke" type="button">播放筆順</button>
+          <div class="char-picker" aria-label="選擇要練習的國字">
+            <button class="char-chip active" type="button" data-char="露" data-reading="ㄌㄨˋ" aria-label="練習露字">露</button>
+            <button class="char-chip" type="button" data-char="愁" data-reading="ㄔㄡˊ" aria-label="練習愁字">愁</button>
+            <button class="char-chip" type="button" data-char="嘆" data-reading="ㄊㄢˋ" aria-label="練習嘆字">嘆</button>
+            <button class="char-chip" type="button" data-char="擔" data-reading="ㄉㄢ" aria-label="練習擔字">擔</button>
+            <button class="char-chip" type="button" data-char="載" data-reading="ㄗㄞˋ" aria-label="練習載字">載</button>
+            <button class="char-chip" type="button" data-char="通" data-reading="ㄊㄨㄥ" aria-label="練習通字">通</button>
+            <button class="char-chip" type="button" data-char="搶" data-reading="ㄑㄧㄤˇ" aria-label="練習搶字">搶</button>
+            <button class="char-chip" type="button" data-char="遇" data-reading="ㄩˋ" aria-label="練習遇字">遇</button>
+            <button class="char-chip" type="button" data-char="比" data-reading="ㄅㄧˇ" aria-label="練習比字">比</button>
+            <button class="char-chip" type="button" data-char="舟" data-reading="ㄓㄡ" aria-label="練習舟字">舟</button>
+            <button class="char-chip" type="button" data-char="疲" data-reading="ㄆㄧˊ" aria-label="練習疲字">疲</button>
+            <button class="char-chip" type="button" data-char="努" data-reading="ㄋㄨˇ" aria-label="練習努字">努</button>
+            <button class="char-chip" type="button" data-char="朝" data-reading="ㄓㄠ" aria-label="練習朝字">朝</button>
+            <button class="char-chip" type="button" data-char="貴" data-reading="ㄍㄨㄟˋ" aria-label="練習貴字">貴</button>
+            <button class="char-chip" type="button" data-char="辜" data-reading="ㄍㄨ" aria-label="練習辜字">辜</button>
+            <button class="char-chip" type="button" data-char="負" data-reading="ㄈㄨˋ" aria-label="練習負字">負</button>
+            <button class="char-chip" type="button" data-char="嫉" data-reading="ㄐㄧˊ" aria-label="練習嫉字">嫉</button>
+            <button class="char-chip" type="button" data-char="妒" data-reading="ㄉㄨˋ" aria-label="練習妒字">妒</button>
+            <button class="char-chip" type="button" data-char="懷" data-reading="ㄏㄨㄞˊ" aria-label="練習懷字">懷</button>
+            <button class="char-chip" type="button" data-char="必" data-reading="ㄅㄧˋ" aria-label="練習必字">必</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section-block" id="section-two" aria-labelledby="sectionTwoTitle">
+      <div class="section-heading">
+        <div>
+          <h2 id="sectionTwoTitle">二、改錯字</h2>
+          <p>每句都藏著同音或形近的錯字。先讀懂意思，再點紅框字核對。</p>
+        </div>
+        <span class="section-count">10 個錯字</span>
+      </div>
+
+      <div class="correction-list">
+        <article class="question-card">
+          <div class="question-head">
+            <div class="question-title"><span class="question-number">1.</span><span class="question-tip">2 個錯字</span></div>
+            <button class="button speak" type="button" data-speech="這位農夫在耕種時都使用有基肥料，時常收獲滿滿。"><span aria-hidden="true">🔊</span><span class="wide-label">朗讀題目</span></button>
+          </div>
+          <p class="sentence">這位農夫在耕種時都使用有<button class="answer-slot correction" type="button" data-kind="correction" data-answer="機" aria-label="錯字基，點擊顯示正確字"><span class="prompt">基</span><span class="answer">機</span></button>肥料，時常收<button class="answer-slot correction" type="button" data-kind="correction" data-answer="穫" aria-label="錯字獲，點擊顯示正確字"><span class="prompt">獲</span><span class="answer">穫</span></button>滿滿。</p>
+          <details class="analysis">
+            <summary>提示與解題解析</summary>
+            <div class="analysis-body">
+              <p><strong>有機肥料</strong>的「機」指有機物；「基」常見於基礎、根基。</p>
+              <p><strong>收穫</strong>是得到成果；「獲」常用在獲得、捕獲。</p>
+              <p class="answer-line">有基 → 有機；收獲 → 收穫。</p>
+              <button class="button speak" type="button" data-speech="第一題。有機肥料的機，是機會的機。收穫的穫，是禾部的穫。">朗讀解析</button>
+            </div>
+          </details>
+        </article>
+
+        <article class="question-card">
+          <div class="question-head">
+            <div class="question-title"><span class="question-number">2.</span><span class="question-tip">3 個錯字</span></div>
+            <button class="button speak" type="button" data-speech="行人狀到分隔斧，送到醫院關察一陣子，還好只是輕微擦傷。"><span aria-hidden="true">🔊</span><span class="wide-label">朗讀題目</span></button>
+          </div>
+          <p class="sentence">行人<button class="answer-slot correction" type="button" data-kind="correction" data-answer="撞" aria-label="錯字狀，點擊顯示正確字"><span class="prompt">狀</span><span class="answer">撞</span></button>到分隔<button class="answer-slot correction" type="button" data-kind="correction" data-answer="島" aria-label="錯字斧，點擊顯示正確字"><span class="prompt">斧</span><span class="answer">島</span></button>，送到醫院<button class="answer-slot correction" type="button" data-kind="correction" data-answer="觀" aria-label="錯字關，點擊顯示正確字"><span class="prompt">關</span><span class="answer">觀</span></button>察一陣子，還好只是輕微擦傷。</p>
+          <details class="analysis">
+            <summary>提示與解題解析</summary>
+            <div class="analysis-body">
+              <p><strong>撞到</strong>是碰擊；<strong>分隔島</strong>是道路中分隔車流的設施；<strong>觀察</strong>是仔細察看。</p>
+              <p class="answer-line">狀 → 撞；斧 → 島；關 → 觀。</p>
+              <button class="button speak" type="button" data-speech="第二題。撞到要用手部的撞。道路中央的是分隔島。仔細察看叫做觀察。">朗讀解析</button>
+            </div>
+          </details>
+        </article>
+
+        <article class="question-card">
+          <div class="question-head">
+            <div class="question-title"><span class="question-number">3.</span><span class="question-tip">3 個錯字</span></div>
+            <button class="button speak" type="button" data-speech="這位附衛生股長非常有責任敢，甚至下課的時候也會主動幫忙擦黑版。"><span aria-hidden="true">🔊</span><span class="wide-label">朗讀題目</span></button>
+          </div>
+          <p class="sentence">這位<button class="answer-slot correction" type="button" data-kind="correction" data-answer="副" aria-label="錯字附，點擊顯示正確字"><span class="prompt">附</span><span class="answer">副</span></button>衛生股長非常有責任<button class="answer-slot correction" type="button" data-kind="correction" data-answer="感" aria-label="錯字敢，點擊顯示正確字"><span class="prompt">敢</span><span class="answer">感</span></button>，甚至下課的時候也會主動幫忙擦黑<button class="answer-slot correction" type="button" data-kind="correction" data-answer="板" aria-label="錯字版，點擊顯示正確字"><span class="prompt">版</span><span class="answer">板</span></button>。</p>
+          <details class="analysis">
+            <summary>提示與解題解析</summary>
+            <div class="analysis-body">
+              <p><strong>副股長</strong>是輔助正股長的職位；<strong>責任感</strong>是一種感受；<strong>黑板</strong>是板狀物。</p>
+              <p class="answer-line">附 → 副；敢 → 感；版 → 板。</p>
+              <button class="button speak" type="button" data-speech="第三題。輔助正股長的人是副股長。責任感是感受的感。黑板是木部的板。">朗讀解析</button>
+            </div>
+          </details>
+        </article>
+
+        <article class="question-card">
+          <div class="question-head">
+            <div class="question-title"><span class="question-number">4.</span><span class="question-tip">2 個錯字</span></div>
+            <button class="button speak" type="button" data-speech="我們可以透過不斷的練習，做好資源回收，讓乾淨資源可以回收大用，營造無讀健康的純淨環境。"><span aria-hidden="true">🔊</span><span class="wide-label">朗讀題目</span></button>
+          </div>
+          <p class="sentence">我們可以透過不斷的練習，做好資源回收，讓乾淨資源可以回收<button class="answer-slot correction" type="button" data-kind="correction" data-answer="再" aria-label="錯字大，點擊顯示正確字"><span class="prompt">大</span><span class="answer">再</span></button>用，營造無<button class="answer-slot correction" type="button" data-kind="correction" data-answer="毒" aria-label="錯字讀，點擊顯示正確字"><span class="prompt">讀</span><span class="answer">毒</span></button>健康的純淨環境。</p>
+          <details class="analysis">
+            <summary>提示與解題解析</summary>
+            <div class="analysis-body">
+              <p><strong>再用</strong>表示又一次使用；<strong>無毒</strong>表示沒有有害物質。</p>
+              <p class="answer-line">大 → 再；讀 → 毒。</p>
+              <button class="button speak" type="button" data-speech="第四題。回收再用，表示再一次使用。無毒，表示沒有有害物質。">朗讀解析</button>
+            </div>
+          </details>
+        </article>
+      </div>
+    </section>
+
+    <section class="section-block" id="section-three" aria-labelledby="sectionThreeTitle">
+      <div class="section-heading">
+        <div>
+          <h2 id="sectionThreeTitle">三、選出適當的成語</h2>
+          <p>先看前後文描述的是動作、心情，還是看不清楚，再選最貼切的成語。</p>
+        </div>
+        <span class="section-count">截圖中可見 2 格</span>
+      </div>
+
+      <div class="idiom-bank" aria-label="成語選項">
+        <span class="idiom-chip">七嘴八舌</span>
+        <span class="idiom-chip">霧裡看花</span>
+        <span class="idiom-chip">居心不良</span>
+        <span class="idiom-chip">一馬當先</span>
+        <span class="idiom-chip">七上八下</span>
+        <span class="idiom-chip">手忙腳亂</span>
+      </div>
+
+      <article class="question-card">
+        <div class="question-head">
+          <div class="question-title"><span class="question-number">自學題</span><span class="question-tip">每個成語不可重複</span></div>
+          <button class="button speak" type="button" data-speech="當聽說外國的名畫家要來台灣辦畫展的時候，許多粉絲手忙腳亂的跑去搶購展覽門票，終於看到畫作時卻總覺得好像霧裡看花。"><span aria-hidden="true">🔊</span><span class="wide-label">朗讀完整句</span></button>
+        </div>
+        <p class="sentence">當聽說外國的名畫家要來台灣辦畫展的時候，許多粉絲<button class="answer-slot idiom" type="button" data-kind="idiom" data-answer="手忙腳亂" aria-label="第一個成語空格，點擊顯示答案"><span class="prompt">點擊核對</span><span class="answer">手忙腳亂</span></button>的跑去搶購展覽門票，終於看到畫作時卻總覺得好像<button class="answer-slot idiom" type="button" data-kind="idiom" data-answer="霧裡看花" aria-label="第二個成語空格，點擊顯示答案"><span class="prompt">點擊核對</span><span class="answer">霧裡看花</span></button>。</p>
+        <details class="analysis">
+          <summary>提示與解題解析</summary>
+          <div class="analysis-body">
+            <p class="strategy">判斷線索：「跑去搶購」是慌亂的動作；「看到了卻不明白」是模糊不清。</p>
+            <div class="meaning-grid">
+              <p><strong>手忙腳亂：</strong>慌張得不知如何是好，符合搶購時的忙亂。</p>
+              <p><strong>霧裡看花：</strong>比喻看不清楚或理解不透徹。</p>
+              <p><strong>七嘴八舌：</strong>很多人紛紛說話。</p>
+              <p><strong>居心不良：</strong>心存惡意。</p>
+              <p><strong>一馬當先：</strong>走在最前面、帶頭前進。</p>
+              <p><strong>七上八下：</strong>心情慌亂不安。</p>
+            </div>
+            <p class="answer-line">答案：手忙腳亂；霧裡看花。</p>
+            <button class="button speak" type="button" data-speech="成語解析。手忙腳亂，形容慌張得不知如何是好。霧裡看花，比喻看不清楚或理解不透徹。">朗讀解析</button>
+          </div>
+        </details>
+      </article>
+    </section>
+
+    <p class="footer-note">依照兩張考卷截圖中清楚可見的內容重製；第三大題截圖只顯示部分題文，因此本頁不推測未出現在圖片中的內容。語音使用裝置內建的中文語音。</p>
+  </main>
+
+  <div class="live-status" id="liveStatus" role="status" aria-live="polite"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.3/dist/hanzi-writer.min.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var slots = Array.from(document.querySelectorAll('.answer-slot'));
+      var progressDone = document.getElementById('progressDone');
+      var progressTotal = document.getElementById('progressTotal');
+      var liveStatus = document.getElementById('liveStatus');
+      var strokeCanvas = document.getElementById('strokeCanvas');
+      var strokeStatus = document.getElementById('strokeStatus');
+      var activeCharLabel = document.getElementById('activeChar');
+      var activeReadingLabel = document.getElementById('activeReading');
+      var zoomLevels = [100, 125, 150, 175, 200];
+      var zoomIndex = 0;
+      var activeChar = '露';
+      var activeReading = 'ㄌㄨˋ';
+      var currentWriter = null;
+      var speakingControl = null;
+      var statusTimer = null;
+
+      progressTotal.textContent = String(slots.length);
+
+      function announce(message) {
+        liveStatus.textContent = message;
+        liveStatus.classList.add('show');
+        clearTimeout(statusTimer);
+        statusTimer = setTimeout(function () {
+          liveStatus.classList.remove('show');
+        }, 2600);
+      }
+
+      function updateProgress() {
+        progressDone.textContent = String(document.querySelectorAll('.answer-slot.revealed').length);
+      }
+
+      function getVoice() {
+        if (!('speechSynthesis' in window)) return null;
+        var voices = window.speechSynthesis.getVoices();
+        return voices.find(function (voice) { return /^zh-TW$/i.test(voice.lang); })
+          || voices.find(function (voice) { return /^zh-Hant/i.test(voice.lang); })
+          || voices.find(function (voice) { return /^zh/i.test(voice.lang); })
+          || null;
+      }
+
+      function clearSpeaking() {
+        if (speakingControl) {
+          speakingControl.classList.remove('speaking');
+          speakingControl.setAttribute('aria-pressed', 'false');
+        }
+        speakingControl = null;
+      }
+
+      function speak(text, control) {
+        if (!('speechSynthesis' in window)) {
+          announce('這個瀏覽器不支援語音，請改用 Safari、Chrome 或 Edge。');
+          return;
+        }
+        window.speechSynthesis.cancel();
+        clearSpeaking();
+        var utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'zh-TW';
+        utterance.rate = 0.78;
+        utterance.pitch = 1;
+        var voice = getVoice();
+        if (voice) utterance.voice = voice;
+        utterance.onstart = function () {
+          speakingControl = control;
+          control.classList.add('speaking');
+          control.setAttribute('aria-pressed', 'true');
+        };
+        utterance.onend = clearSpeaking;
+        utterance.onerror = function () {
+          clearSpeaking();
+          announce('語音暫時無法播放，請確認裝置已啟用中文語音。');
+        };
+        window.speechSynthesis.speak(utterance);
+      }
+
+      document.querySelectorAll('.speak').forEach(function (button) {
+        button.setAttribute('aria-pressed', 'false');
+        button.addEventListener('click', function () {
+          speak(button.dataset.speech, button);
+        });
+      });
+
+      var pageReading = [
+        '第一大題，國字注音。',
+        '他今天一直露出愁眉苦臉的表情，也時常唉聲嘆氣，大家都在擔心他到底怎麼了。',
+        '俗話說馬路如虎口，特別是騎機車載人的時候更要注意交通安全，慢慢來不要搶，以免遇到危險。',
+        '學習好比逆水行舟，可以疲累、可以休息，但千萬不能放棄，只要不斷努力，有朝一日一定會成功。',
+        '與人交友貴在真誠，如果隨便辜負他人，或是嫉妒他人而不懷好意，必然無法交到好朋友。',
+        '第二大題，改錯字。',
+        '這位農夫在耕種時都使用有機肥料，時常收穫滿滿。',
+        '行人撞到分隔島，送到醫院觀察一陣子，還好只是輕微擦傷。',
+        '這位副衛生股長非常有責任感，甚至下課的時候也會主動幫忙擦黑板。',
+        '我們可以透過不斷的練習，做好資源回收，讓乾淨資源可以回收再用，營造無毒健康的純淨環境。',
+        '第三大題，選成語。',
+        '許多粉絲手忙腳亂的跑去搶購展覽門票，看到畫作時卻總覺得好像霧裡看花。'
+      ].join(' ');
+
+      document.getElementById('readPage').addEventListener('click', function (event) {
+        speak(pageReading, event.currentTarget);
+      });
+
+      document.getElementById('stopSpeech').addEventListener('click', function () {
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        clearSpeaking();
+        announce('已停止朗讀');
+      });
+
+      function applyZoom() {
+        var value = zoomLevels[zoomIndex];
+        document.documentElement.style.fontSize = value + '%';
+        document.body.classList.toggle('zoomed', value >= 150);
+        document.getElementById('zoomValue').textContent = value + '%';
+        document.getElementById('maxZoom').setAttribute('aria-pressed', value === 200 ? 'true' : 'false');
+        announce('字體大小已調整為百分之' + value);
+      }
+
+      document.getElementById('zoomIn').addEventListener('click', function () {
+        zoomIndex = Math.min(zoomLevels.length - 1, zoomIndex + 1);
+        applyZoom();
+      });
+      document.getElementById('zoomOut').addEventListener('click', function () {
+        zoomIndex = Math.max(0, zoomIndex - 1);
+        applyZoom();
+      });
+      document.getElementById('maxZoom').addEventListener('click', function () {
+        zoomIndex = zoomIndex === zoomLevels.length - 1 ? 0 : zoomLevels.length - 1;
+        applyZoom();
+      });
+
+      document.getElementById('contrastToggle').addEventListener('click', function (event) {
+        var enabled = document.body.classList.toggle('high-contrast');
+        event.currentTarget.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+        announce(enabled ? '已開啟高對比模式' : '已關閉高對比模式');
+      });
+
+      function showFallback(char, message) {
+        strokeCanvas.innerHTML = '';
+        var fallback = document.createElement('span');
+        fallback.className = 'fallback-char';
+        fallback.textContent = char;
+        strokeCanvas.appendChild(fallback);
+        strokeStatus.textContent = message;
+      }
+
+      function loadStrokeCharacter(char, reading, autoplay) {
+        activeChar = char;
+        activeReading = reading;
+        activeCharLabel.textContent = char;
+        activeReadingLabel.textContent = reading;
+        document.querySelectorAll('.char-chip').forEach(function (chip) {
+          chip.classList.toggle('active', chip.dataset.char === char);
+        });
+        strokeCanvas.innerHTML = '';
+        currentWriter = null;
+
+        if (!window.HanziWriter) {
+          showFallback(char, '筆順元件未載入；答案、解析與語音仍可使用。連上網路後重新開啟即可。');
+          return;
+        }
+
+        strokeStatus.textContent = '正在準備「' + char + '」的筆順……';
+        var writerForCharacter = null;
+        var charDataLoader = function (character, onComplete, onError) {
+          var url = 'https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0.1/' + encodeURIComponent(character) + '.json';
+          fetch(url)
+            .then(function (response) {
+              if (!response.ok) throw new Error('字形資料載入失敗');
+              return response.json();
+            })
+            .then(function (data) {
+              onComplete(data);
+              if (activeChar !== char) return;
+              strokeStatus.textContent = '「' + char + '」已準備好，可按按鈕重播。';
+              if (autoplay && writerForCharacter) {
+                setTimeout(function () { writerForCharacter.animateCharacter(); }, 120);
+              }
+            })
+            .catch(function (error) {
+              onError(error);
+              if (activeChar === char) {
+                currentWriter = null;
+                showFallback(char, '筆順資料暫時無法載入；請確認網路後再試一次。');
+              }
+            });
+        };
+
+        try {
+          var size = Math.min(strokeCanvas.clientWidth || 270, strokeCanvas.clientHeight || 270);
+          writerForCharacter = window.HanziWriter.create(strokeCanvas, char, {
+            width: size,
+            height: size,
+            padding: 20,
+            showOutline: true,
+            showCharacter: false,
+            strokeColor: '#96281f',
+            outlineColor: '#d5d3c9',
+            radicalColor: '#0e365b',
+            strokeAnimationSpeed: 1.2,
+            delayBetweenStrokes: 140,
+            charDataLoader: charDataLoader
+          });
+          currentWriter = writerForCharacter;
+        } catch (error) {
+          showFallback(char, '筆順動畫暫時無法顯示；其他學習功能仍可使用。');
+        }
+      }
+
+      slots.forEach(function (slot) {
+        slot.dataset.originalLabel = slot.getAttribute('aria-label') || '';
+        slot.addEventListener('click', function () {
+          var firstReveal = !slot.classList.contains('revealed');
+          slot.classList.add('revealed');
+          slot.setAttribute('aria-label', '答案：' + slot.dataset.answer);
+          updateProgress();
+          if (slot.dataset.char) {
+            loadStrokeCharacter(slot.dataset.char, slot.dataset.reading, true);
+          }
+          if (firstReveal) announce('答案：' + slot.dataset.answer);
+        });
+      });
+
+      document.querySelectorAll('.char-chip').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          loadStrokeCharacter(chip.dataset.char, chip.dataset.reading, true);
+        });
+      });
+
+      document.getElementById('playStroke').addEventListener('click', function () {
+        if (currentWriter) {
+          currentWriter.animateCharacter();
+          strokeStatus.textContent = '正在書寫「' + activeChar + '」……';
+        } else {
+          loadStrokeCharacter(activeChar, activeReading, true);
+        }
+      });
+
+      document.getElementById('revealAll').addEventListener('click', function () {
+        slots.forEach(function (slot) { slot.classList.add('revealed'); });
+        updateProgress();
+        announce('已顯示全部 ' + slots.length + ' 個答案');
+      });
+
+      document.getElementById('resetQuiz').addEventListener('click', function () {
+        slots.forEach(function (slot) {
+          slot.classList.remove('revealed');
+          slot.setAttribute('aria-label', slot.dataset.originalLabel);
+        });
+        document.querySelectorAll('details.analysis').forEach(function (detail) {
+          detail.open = false;
+        });
+        updateProgress();
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        clearSpeaking();
+        loadStrokeCharacter('露', 'ㄌㄨˋ', false);
+        announce('答案已清除，可以重新練習');
+      });
+
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.getVoices();
+        if (window.speechSynthesis.addEventListener) {
+          window.speechSynthesis.addEventListener('voiceschanged', getVoice, { once: true });
+        }
+      }
+
+      loadStrokeCharacter('露', 'ㄌㄨˋ', false);
+    })();
+  </script>
+</body>
+</html>
