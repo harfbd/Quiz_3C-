@@ -228,6 +228,11 @@
     body.high-contrast details.analysis > summary {
       color: #ffef3d;
     }
+    body.high-contrast .answer-slot.revealed::after {
+      color: #000;
+      background: #ffef3d;
+      border-color: #fff;
+    }
     body.high-contrast .question-card,
     body.high-contrast .study-toolbar,
     body.high-contrast details.analysis,
@@ -402,6 +407,28 @@
       box-shadow: 0 0 0 4px rgba(200,60,50,.13), 4px 5px 0 rgba(200,60,50,.2);
     }
     .answer-slot.revealed:hover { transform: translateY(-2px) scale(1.025); }
+    .answer-slot.revealed::after {
+      content: "聽";
+      position: absolute;
+      top: -.7em;
+      right: -.7em;
+      display: grid;
+      place-items: center;
+      width: 1.65em;
+      height: 1.65em;
+      color: #fff;
+      background: var(--navy);
+      border: 2px solid var(--paper);
+      border-radius: 50%;
+      font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
+      font-size: .45em;
+      font-weight: 900;
+      line-height: 1;
+      text-decoration: none;
+    }
+    .answer-slot.speaking {
+      animation: answer-speaking .9s ease-in-out infinite;
+    }
     .answer-slot.revealed .prompt {
       color: var(--muted);
       font-size: .64em;
@@ -461,6 +488,7 @@
     }
     .answer-slot.correction.revealed .prompt::before { content: "錯"; }
     .answer-slot.correction.revealed .answer::before { content: "正"; }
+    .answer-slot.correction.revealed::after { background: var(--green); }
     .answer-slot.idiom { min-width: 7.4em; }
     .answer-slot.idiom.revealed { min-width: 10em; min-height: 4em; }
     .answer-slot.idiom .prompt { color: var(--muted); font-family: inherit; font-size: .62em; }
@@ -469,6 +497,9 @@
     @keyframes answer-in {
       from { opacity: 0; transform: scale(.72); }
       to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes answer-speaking {
+      50% { box-shadow: 0 0 0 8px rgba(241,185,64,.42), 4px 5px 0 rgba(14,54,91,.16); }
     }
 
     .segment-wrap { margin-top: 12px; }
@@ -1101,10 +1132,15 @@
       function revealedLabel(slot) {
         var prompt = slot.querySelector('.prompt');
         var original = prompt ? prompt.textContent.trim() : '';
+        var spoken = slot.dataset.char || slot.dataset.answer;
         if (slot.dataset.kind === 'correction') {
-          return '錯字：' + original + '；正確字：' + slot.dataset.answer;
+          return '錯字：' + original + '；正確字：' + slot.dataset.answer + '。按一下朗讀正確字';
         }
-        return '答案：' + slot.dataset.answer;
+        return '答案：' + slot.dataset.answer + '。按一下朗讀「' + spoken + '」';
+      }
+
+      function answerSpeechText(slot) {
+        return slot.dataset.char || slot.dataset.answer;
       }
 
       function getVoice() {
@@ -1119,7 +1155,9 @@
       function clearSpeaking() {
         if (speakingControl) {
           speakingControl.classList.remove('speaking');
-          speakingControl.setAttribute('aria-pressed', 'false');
+          if (speakingControl.hasAttribute('aria-pressed')) {
+            speakingControl.setAttribute('aria-pressed', 'false');
+          }
         }
         speakingControl = null;
       }
@@ -1140,7 +1178,9 @@
         utterance.onstart = function () {
           speakingControl = control;
           control.classList.add('speaking');
-          control.setAttribute('aria-pressed', 'true');
+          if (control.classList.contains('speak') || control.id === 'readPage') {
+            control.setAttribute('aria-pressed', 'true');
+          }
         };
         utterance.onend = clearSpeaking;
         utterance.onerror = function () {
@@ -1294,6 +1334,7 @@
             loadStrokeCharacter(slot.dataset.char, slot.dataset.reading, true);
           }
           if (firstReveal) announce(label);
+          speak(answerSpeechText(slot), slot);
         });
       });
 
