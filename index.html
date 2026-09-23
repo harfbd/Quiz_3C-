@@ -392,36 +392,79 @@
     .answer-slot[data-kind="reading"] .prompt { font-family: "Kaiti TC", "BiauKai", serif; font-size: 1em; }
     .answer-slot .answer { display: none; color: var(--red-dark); font-weight: 900; }
     .answer-slot.revealed {
-      min-width: 3.45em;
-      min-height: 3em;
-      padding: .22em .48em;
+      z-index: 2;
+      min-width: 4em;
+      min-height: 3.55em;
+      padding: .3em .62em;
       color: var(--red-dark);
       background: var(--red-soft);
-      border-color: var(--red);
-      box-shadow: 3px 3px 0 rgba(200,60,50,.18);
+      border: 4px solid var(--red);
+      box-shadow: 0 0 0 4px rgba(200,60,50,.13), 4px 5px 0 rgba(200,60,50,.2);
     }
+    .answer-slot.revealed:hover { transform: translateY(-2px) scale(1.025); }
     .answer-slot.revealed .prompt {
       color: var(--muted);
-      font-size: .6em;
+      font-size: .64em;
       line-height: 1.05;
       text-decoration: none;
     }
     .answer-slot.revealed .answer {
       display: block;
-      font-size: 1.18em;
+      font-size: 1.34em;
       line-height: 1.08;
       animation: answer-in .3s ease both;
     }
-    .answer-slot.revealed[data-kind="reading"] .answer { font-size: .82em; white-space: nowrap; }
-    .answer-slot.revealed[data-kind="character"] .answer { font-family: "Kaiti TC", "BiauKai", serif; font-size: 1.38em; }
+    .answer-slot.revealed[data-kind="reading"] .answer { font-size: 1em; white-space: nowrap; }
+    .answer-slot.revealed[data-kind="character"] .answer { font-family: "Kaiti TC", "BiauKai", serif; font-size: 1.62em; }
 
+    .answer-slot.correction {
+      color: var(--red-dark);
+      background: var(--red-soft);
+      border-color: var(--red);
+    }
     .answer-slot.correction .prompt { font-size: 1em; color: var(--red-dark); }
-    .answer-slot.correction.revealed .prompt { text-decoration: line-through; }
-    .answer-slot.correction .answer { font-family: "Kaiti TC", "BiauKai", serif; font-size: 1.36em; }
+    .answer-slot.correction.revealed {
+      grid-template-columns: auto auto;
+      gap: .55em;
+      min-width: 7em;
+      min-height: 4.25em;
+      padding: .34em .7em;
+      background: var(--surface);
+      border-color: var(--green);
+      box-shadow: 0 0 0 5px rgba(29,106,80,.14), 4px 5px 0 rgba(29,106,80,.2);
+    }
+    .answer-slot.correction.revealed .prompt,
+    .answer-slot.correction.revealed .answer {
+      display: grid;
+      place-items: center;
+      gap: .08em;
+      min-width: 1.55em;
+    }
+    .answer-slot.correction.revealed .prompt {
+      color: var(--red-dark);
+      font-size: 1.18em;
+      text-decoration: line-through;
+      text-decoration-thickness: 3px;
+    }
+    .answer-slot.correction.revealed .answer {
+      color: var(--green);
+      font-family: "Kaiti TC", "BiauKai", serif;
+      font-size: 1.72em;
+    }
+    .answer-slot.correction.revealed .prompt::before,
+    .answer-slot.correction.revealed .answer::before {
+      font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
+      font-size: .38em;
+      font-weight: 900;
+      line-height: 1;
+      text-decoration: none;
+    }
+    .answer-slot.correction.revealed .prompt::before { content: "錯"; }
+    .answer-slot.correction.revealed .answer::before { content: "正"; }
     .answer-slot.idiom { min-width: 7.4em; }
-    .answer-slot.idiom.revealed { min-width: 8.6em; }
+    .answer-slot.idiom.revealed { min-width: 10em; min-height: 4em; }
     .answer-slot.idiom .prompt { color: var(--muted); font-family: inherit; font-size: .62em; }
-    .answer-slot.idiom .answer { font-size: .96em; white-space: nowrap; }
+    .answer-slot.idiom .answer { font-size: 1.14em; white-space: nowrap; }
 
     @keyframes answer-in {
       from { opacity: 0; transform: scale(.72); }
@@ -1055,6 +1098,15 @@
         progressDone.textContent = String(document.querySelectorAll('.answer-slot.revealed').length);
       }
 
+      function revealedLabel(slot) {
+        var prompt = slot.querySelector('.prompt');
+        var original = prompt ? prompt.textContent.trim() : '';
+        if (slot.dataset.kind === 'correction') {
+          return '錯字：' + original + '；正確字：' + slot.dataset.answer;
+        }
+        return '答案：' + slot.dataset.answer;
+      }
+
       function getVoice() {
         if (!('speechSynthesis' in window)) return null;
         var voices = window.speechSynthesis.getVoices();
@@ -1235,12 +1287,13 @@
         slot.addEventListener('click', function () {
           var firstReveal = !slot.classList.contains('revealed');
           slot.classList.add('revealed');
-          slot.setAttribute('aria-label', '答案：' + slot.dataset.answer);
+          var label = revealedLabel(slot);
+          slot.setAttribute('aria-label', label);
           updateProgress();
           if (slot.dataset.char) {
             loadStrokeCharacter(slot.dataset.char, slot.dataset.reading, true);
           }
-          if (firstReveal) announce('答案：' + slot.dataset.answer);
+          if (firstReveal) announce(label);
         });
       });
 
@@ -1260,7 +1313,10 @@
       });
 
       document.getElementById('revealAll').addEventListener('click', function () {
-        slots.forEach(function (slot) { slot.classList.add('revealed'); });
+        slots.forEach(function (slot) {
+          slot.classList.add('revealed');
+          slot.setAttribute('aria-label', revealedLabel(slot));
+        });
         updateProgress();
         announce('已顯示全部 ' + slots.length + ' 個答案');
       });
