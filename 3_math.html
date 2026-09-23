@@ -1,0 +1,1203 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="國小三年級數學考卷的無障礙互動自學教材，包含語音、放大、高反差、操作教具與迷思解析。">
+  <title>三年級數學｜無障礙自學助手</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b5c5a'/%3E%3Cpath d='M14 18h36v8H14zm0 20h36v8H14zM28 8h8v48h-8z' fill='%23fff'/%3E%3C/svg%3E">
+  <style>
+    :root {
+      --scale: 1;
+      --ink: #18302e;
+      --muted: #526663;
+      --paper: #f4faf8;
+      --surface: #ffffff;
+      --teal: #0b5c5a;
+      --teal-2: #087f78;
+      --blue: #184f91;
+      --yellow: #ffd45c;
+      --orange: #b85014;
+      --good: #116b3a;
+      --bad: #a32622;
+      --line: #b8ceca;
+      --shadow: 0 10px 28px rgba(15, 63, 59, .12);
+      font-size: calc(16px * var(--scale));
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 8.5rem; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 3%, rgba(255, 212, 92, .28), transparent 22rem),
+        linear-gradient(180deg, #eaf8f5 0, var(--paper) 28rem);
+      font-family: system-ui, -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif;
+      line-height: 1.7;
+    }
+    button, input, select { font: inherit; }
+    button { min-height: 2.9rem; }
+    button:focus-visible, a:focus-visible, input:focus-visible, [tabindex]:focus-visible {
+      outline: .25rem solid #ff9f1c;
+      outline-offset: .2rem;
+    }
+    .skip-link {
+      position: fixed; left: 1rem; top: -5rem; z-index: 1000;
+      padding: .7rem 1rem; color: #fff; background: #111; border-radius: .5rem;
+    }
+    .skip-link:focus { top: 1rem; }
+    .toolbar {
+      position: sticky; top: 0; z-index: 50;
+      display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+      padding: .65rem max(1rem, calc((100% - 80rem) / 2));
+      color: #fff; background: rgba(11, 92, 90, .97);
+      box-shadow: 0 3px 14px rgba(0,0,0,.2);
+    }
+    .brand { font-weight: 900; margin-right: auto; letter-spacing: .04em; }
+    .tool-button, .answer-button, .action, .step-button, .choice {
+      border: .12rem solid currentColor; border-radius: .75rem; cursor: pointer;
+      font-weight: 800; transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+    .tool-button { color: #fff; background: transparent; padding: .45rem .72rem; }
+    .tool-button:hover, .tool-button[aria-pressed="true"] { color: #073d3b; background: #fff; }
+    .tool-button:hover, .answer-button:hover, .action:hover, .step-button:hover, .choice:hover { transform: translateY(-2px); }
+    .page-shell { width: min(80rem, calc(100% - 2rem)); margin: 0 auto 4rem; }
+    .intro {
+      display: grid; grid-template-columns: 1.35fr .65fr; gap: 1.2rem;
+      align-items: stretch; padding: 1.5rem 0 1rem;
+    }
+    .intro-copy, .today-card, .guided-coach, .lesson, .solution-bank {
+      background: var(--surface); border: 1px solid var(--line); border-radius: 1.25rem; box-shadow: var(--shadow);
+    }
+    .intro-copy { padding: clamp(1.25rem, 4vw, 2.5rem); border-top: .65rem solid var(--yellow); }
+    .eyebrow { margin: 0; color: var(--teal); font-weight: 900; letter-spacing: .12em; }
+    h1 { margin: .25rem 0 .6rem; font-size: clamp(2rem, 5vw, 3.8rem); line-height: 1.15; }
+    h2 { margin: 0 0 .6rem; font-size: clamp(1.55rem, 3vw, 2.3rem); line-height: 1.3; }
+    h3 { margin: 0 0 .5rem; font-size: 1.25rem; line-height: 1.4; }
+    p { margin: .4rem 0 .8rem; }
+    .lead { font-size: 1.15rem; color: var(--muted); max-width: 48rem; }
+    .today-card { padding: 1.3rem; color: #fff; background: var(--teal); }
+    .today-card strong { display: block; font-size: 2.2rem; color: var(--yellow); }
+    .quick-nav {
+      display: flex; gap: .55rem; overflow-x: auto; padding: .5rem 0 1rem;
+      position: sticky; top: 4.55rem; z-index: 30; background: rgba(244,250,248,.94); backdrop-filter: blur(8px);
+    }
+    .quick-nav a {
+      flex: 0 0 auto; min-height: 2.75rem; display: inline-flex; align-items: center;
+      padding: .5rem .85rem; color: var(--teal); background: #fff;
+      border: .12rem solid var(--teal); border-radius: 999px; text-decoration: none; font-weight: 850;
+    }
+    .quick-nav a:hover { color: #fff; background: var(--teal); }
+    .guided-coach {
+      margin: .3rem 0 1.25rem; overflow: hidden; border: .18rem solid var(--teal);
+    }
+    .coach-header {
+      display: flex; align-items: center; gap: .8rem; flex-wrap: wrap;
+      padding: 1rem 1.2rem; color: #fff; background: var(--teal);
+    }
+    .coach-header h2 { margin: 0; font-size: clamp(1.35rem, 3vw, 1.9rem); }
+    .coach-header p { margin: 0; opacity: .92; }
+    .coach-badge {
+      flex: 0 0 auto; display: grid; place-items: center; width: 3.25rem; height: 3.25rem;
+      border-radius: 50%; color: #073d3b; background: var(--yellow); font-size: 1.65rem;
+    }
+    .unit-picker {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: .55rem; padding: 1rem 1rem .3rem;
+    }
+    .unit-button {
+      min-height: 4rem; padding: .55rem; color: var(--teal); background: #fff;
+      border: .14rem solid var(--line); border-radius: .85rem; cursor: pointer; font-weight: 900;
+    }
+    .unit-button span { display: block; font-size: .82rem; font-weight: 700; color: var(--muted); }
+    .unit-button[aria-pressed="true"] { color: #fff; background: var(--teal); border-color: var(--teal); box-shadow: 0 0 0 .22rem rgba(255,212,92,.8); }
+    .unit-button[aria-pressed="true"] span { color: #fff; }
+    .coach-body { display: grid; grid-template-columns: minmax(0, 1fr) 15rem; gap: 1rem; padding: 1rem; }
+    .coach-main { min-width: 0; }
+    .coach-step-line { display: flex; justify-content: space-between; gap: .7rem; align-items: center; margin-bottom: .5rem; }
+    .coach-step-label { color: var(--teal); font-weight: 900; }
+    .coach-progress { width: 10rem; height: .7rem; overflow: hidden; border-radius: 999px; background: #d9e8e5; }
+    .coach-progress > span { display: block; width: 33.33%; height: 100%; background: var(--orange); transition: width .3s ease; }
+    .coach-script {
+      min-height: 7.5rem; margin: 0; padding: 1.1rem; border: .15rem solid var(--blue);
+      border-radius: 1rem; color: #132a49; background: #eef6ff; font-size: clamp(1.25rem, 3vw, 1.75rem); font-weight: 800; line-height: 1.9;
+    }
+    .speech-char { border-radius: .18em; transition: color .12s ease, background .12s ease; }
+    .speech-char.spoken { color: #075da8; }
+    .speech-char.is-speaking { color: #171000; background: var(--yellow); box-shadow: 0 0 0 .12em var(--yellow); }
+    .coach-controls { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: .8rem; }
+    .coach-controls button { padding: .55rem .75rem; }
+    .coach-side {
+      align-self: stretch; display: flex; flex-direction: column; justify-content: center; gap: .6rem;
+      padding: 1rem; border-radius: 1rem; color: #fff; background: #173e65;
+    }
+    .coach-side strong { color: var(--yellow); font-size: 1.15rem; }
+    .coach-action { width: 100%; padding: .7rem; color: #173e65; background: var(--yellow); }
+    .attention-pulse { animation: attention 1s ease-in-out 3; position: relative; z-index: 2; }
+    .nudge { animation: nudge .75s ease-in-out 2; }
+    .lesson, .solution-bank { margin: 1.25rem 0; padding: clamp(1rem, 3vw, 2rem); }
+    .lesson-heading { display: flex; gap: 1rem; align-items: start; }
+    .lesson-number {
+      flex: 0 0 3rem; width: 3rem; height: 3rem; display: grid; place-items: center;
+      border-radius: 50%; color: #fff; background: var(--teal); font-size: 1.4rem; font-weight: 900;
+    }
+    .concept-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin: 1rem 0; }
+    .concept-strip > div { padding: 1rem; background: #edf8f6; border-left: .4rem solid var(--teal-2); border-radius: .8rem; }
+    .concept-strip strong { display: block; color: var(--teal); }
+    .lab {
+      margin-top: 1.1rem; padding: 1.1rem; border: .15rem solid var(--teal); border-radius: 1rem;
+      background: linear-gradient(135deg, #fff, #f0fbf8);
+    }
+    .lab-title { display: flex; align-items: center; gap: .6rem; }
+    .lab-title::before { content: "動手"; padding: .2rem .55rem; color: #fff; background: var(--orange); border-radius: 999px; font-size: .85rem; }
+    .action-row { display: flex; flex-wrap: wrap; gap: .65rem; align-items: center; margin-top: .8rem; }
+    .action, .step-button { padding: .55rem .85rem; color: #fff; background: var(--teal); }
+    .action.secondary, .step-button.secondary { color: var(--teal); background: #fff; }
+    .big-output {
+      min-height: 4.5rem; display: block; align-content: center; margin: 1rem 0;
+      padding: .75rem; border-radius: .85rem; background: #e6f3ff; border: .15rem dashed var(--blue);
+      color: #102d56; font-size: clamp(1.5rem, 4vw, 2.6rem); font-weight: 900; text-align: center; word-break: normal; overflow-wrap: anywhere;
+    }
+    .meter-wrap { display: grid; grid-template-columns: minmax(7rem, 11rem) 1fr; gap: 1rem; align-items: end; }
+    .measuring-cup {
+      position: relative; height: 15rem; border: .22rem solid var(--blue); border-top: 0;
+      border-radius: 0 0 1.2rem 1.2rem; overflow: hidden; background: #fff;
+    }
+    .water { position: absolute; inset: auto 0 0; height: 0%; background: linear-gradient(#55c9ff, #1f8bd7); transition: height .35s ease; }
+    .water-label { position: absolute; inset: 50% .35rem auto; transform: translateY(-50%); text-align: center; font-weight: 900; color: #001e37; z-index: 2; text-shadow: 0 1px #fff; }
+    .measure-marks { position: absolute; inset: 0 .4rem; z-index: 3; background: repeating-linear-gradient(to top, transparent 0 9.7%, rgba(0,0,0,.5) 10% 10.4%); pointer-events: none; }
+    input[type="range"] { width: 100%; min-height: 2.6rem; accent-color: var(--teal); }
+    #capacity, #capacity * { writing-mode: horizontal-tb; text-orientation: mixed; }
+    #capacity .lesson-heading > div { min-width: 0; }
+    .capacity-rule-grid { grid-template-columns: 1fr auto 1fr auto 1fr; align-items: stretch; }
+    .capacity-rule-grid > div {
+      min-width: 0; display: flex; flex-direction: column; justify-content: center;
+      border: .12rem solid #9fcac4; border-left: .4rem solid var(--teal-2);
+    }
+    .capacity-rule-grid strong { font-size: 1.08rem; }
+    .capacity-rule-grid span { display: block; font-weight: 750; line-height: 1.55; }
+    .capacity-arrow { align-self: center; color: var(--orange); font-size: 1.8rem; font-weight: 950; }
+    .capacity-rule-grid .capacity-arrow { padding: 0; border: 0; background: transparent; }
+    .capacity-equation {
+      display: flex; align-items: center; justify-content: center; gap: clamp(.45rem, 2vw, 1rem); flex-wrap: wrap;
+      margin: 1rem 0; padding: .85rem 1rem; border-radius: .9rem; color: #102d56; background: #e6f3ff;
+      border: .15rem solid #79a8d5; font-size: clamp(1.35rem, 3vw, 2rem); font-weight: 950; text-align: center;
+    }
+    .capacity-equation .unit-block { padding: .25rem .7rem; border-radius: .6rem; background: #fff; border: .12rem solid var(--blue); white-space: nowrap; }
+    .capacity-workbench { display: grid; grid-template-columns: minmax(18rem, .85fr) minmax(0, 1.15fr); gap: 1.15rem; align-items: stretch; }
+    .capacity-model, .capacity-controls {
+      min-width: 0; padding: 1rem; border-radius: .9rem; background: #fff; border: .12rem solid var(--line);
+    }
+    .capacity-model h4, .capacity-controls h4 { margin: 0 0 .65rem; color: var(--teal); font-size: 1.15rem; }
+    .liter-bank { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .45rem; min-height: 7.3rem; align-content: start; }
+    .liter-token {
+      min-width: 0; display: grid; place-items: center; padding: .55rem .25rem; border-radius: .65rem;
+      color: #083d3a; background: #d9f5ef; border: .14rem solid var(--teal-2); font-weight: 950; text-align: center;
+      animation: answer-pop .28s ease-out both;
+    }
+    .liter-token small { display: block; font-size: .72rem; font-weight: 750; line-height: 1.3; }
+    .liter-empty { grid-column: 1 / -1; align-self: center; padding: 1rem; color: var(--muted); background: #f3f7f6; border-radius: .7rem; text-align: center; }
+    .remainder-zone {
+      display: grid; grid-template-columns: 7rem 1fr; gap: .8rem; align-items: center;
+      margin-top: .8rem; padding-top: .8rem; border-top: .12rem dashed var(--line);
+    }
+    .remainder-cup { width: 7rem; height: 9rem; justify-self: center; }
+    .remainder-copy strong { display: block; color: var(--blue); font-size: 1.15rem; }
+    .remainder-copy span { display: block; font-size: clamp(1.3rem, 3vw, 1.8rem); font-weight: 950; }
+    .capacity-slider-label { display: flex; justify-content: space-between; align-items: baseline; gap: .7rem; flex-wrap: wrap; }
+    .capacity-slider-label output { color: var(--blue); font-size: 1.25rem; font-weight: 950; }
+    .range-scale { display: flex; justify-content: space-between; color: var(--muted); font-size: .9rem; font-weight: 750; }
+    .volume-breakdown {
+      margin-top: .7rem; padding: .7rem .8rem; color: #533000; background: #fff6d9;
+      border-left: .38rem solid var(--orange); border-radius: .5rem; font-size: 1.08rem; font-weight: 850; line-height: 1.65;
+    }
+    .capacity-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .capacity-actions .step-button { min-width: 0; padding-inline: .45rem; }
+    .clock-stage { display: grid; grid-template-columns: minmax(12rem, 20rem) 1fr; gap: 1.2rem; align-items: center; }
+    .clock { width: min(100%, 19rem); aspect-ratio: 1; margin: auto; }
+    .clock-face { fill: #fff; stroke: var(--ink); stroke-width: 4; }
+    .clock-mark { stroke: var(--muted); stroke-width: 2; }
+    .clock-hand { stroke: var(--bad); stroke-width: 6; stroke-linecap: round; transform-origin: 100px 100px; transition: transform .25s ease; }
+    .clock-hour { stroke: var(--blue); stroke-width: 8; }
+    .clock-center { fill: var(--ink); }
+    .division-board { display: grid; gap: .8rem; }
+    .items { display: flex; flex-wrap: wrap; gap: .28rem; min-height: 3rem; padding: .8rem; background: #fff; border: 1px solid var(--line); border-radius: .8rem; }
+    .item-dot { width: 1.25rem; height: 1.25rem; border-radius: .3rem; background: var(--yellow); border: 2px solid #6a4a00; }
+    .groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(6rem, 1fr)); gap: .55rem; }
+    .group { min-height: 5rem; padding: .55rem; border: .13rem solid var(--blue); border-radius: .7rem; background: #eff6ff; }
+    .group strong { display: block; color: var(--blue); }
+    .seats { display: grid; grid-template-columns: repeat(4, 1fr); gap: .2rem; margin-top: .35rem; }
+    .seat { aspect-ratio: 1; border-radius: 50%; background: var(--yellow); border: 1px solid #6a4a00; }
+    .seat.empty { background: #fff; border-style: dashed; }
+    .area-wrap { display: grid; grid-template-columns: minmax(18rem, 1fr) minmax(14rem, .72fr); gap: 1rem; align-items: start; }
+    .shape-grid { width: 100%; background: #fff; border: 1px solid var(--line); border-radius: .75rem; }
+    .grid-line { stroke: #60736f; stroke-width: .045; }
+    .shape { fill: #ffd45c; stroke: #6a4a00; stroke-width: .08; }
+    .shape.b { fill: #8fd8ce; stroke: #064f4b; }
+    .shape.e { fill: #9fc5ef; stroke: #163f73; }
+    .shape, .shape-label { transition: opacity .25s ease, filter .25s ease; }
+    .shape-grid.decomposing .shape:not(.selected-shape) { opacity: .2; }
+    .shape-grid.decomposing .shape-label:not(.selected-label) { opacity: .28; }
+    .shape.selected-shape { filter: saturate(1.25) drop-shadow(0 0 .16px rgba(0,0,0,.7)); }
+    .shape-label { font-size: 1px; font-weight: 900; text-anchor: middle; dominant-baseline: middle; fill: #132a28; }
+    .unit-overlay { display: none; pointer-events: none; }
+    .unit-overlay.show { display: block; }
+    .unit-overlay .dash-fill {
+      fill: url(#dashGrid); stroke: #a43b00; stroke-width: .13; stroke-dasharray: .28 .18;
+      animation: grid-trace 1.05s ease-out both;
+    }
+    .dash-unit-line { fill: none; stroke: #a43b00; stroke-width: .085; stroke-dasharray: .24 .12; }
+    .area-tools { display: grid; gap: .6rem; }
+    .count-result { padding: 1rem; background: #fff8dc; border: .15rem solid #c78600; border-radius: .8rem; font-weight: 800; }
+    .unit-legend { display: flex; gap: .6rem; align-items: center; padding: .55rem .7rem; border-radius: .7rem; background: #fff8dc; font-weight: 800; }
+    .legend-square { width: 2.1rem; height: 2.1rem; flex: 0 0 auto; border: .18rem dashed #a43b00; background: #fff; }
+    .misconception {
+      margin-top: 1rem; display: grid; grid-template-columns: 1fr 1fr; gap: .7rem;
+    }
+    .misconception > div { padding: .9rem; border-radius: .8rem; }
+    .wrong { color: #621713; background: #fff0ef; border-left: .4rem solid var(--bad); }
+    .right { color: #0c4d29; background: #ebfff3; border-left: .4rem solid var(--good); }
+    .wrong strong, .right strong { display: block; }
+    .timeline { display: flex; align-items: center; gap: .2rem; overflow-x: auto; padding: 1rem 0; }
+    .time-node { flex: 0 0 auto; padding: .65rem .75rem; border: .14rem solid var(--blue); border-radius: .7rem; background: #fff; font-weight: 900; text-align: center; }
+    .time-arrow { flex: 1 0 5rem; min-width: 5rem; text-align: center; color: var(--blue); font-weight: 900; border-top: .2rem solid var(--blue); }
+    .time-arrow span { position: relative; top: -.95rem; padding: 0 .3rem; background: #f3fbfa; }
+    .filter-bar { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+    .filter-button { padding: .5rem .75rem; color: var(--teal); background: #fff; border: .12rem solid var(--teal); border-radius: 999px; font-weight: 800; cursor: pointer; }
+    .filter-button[aria-pressed="true"] { color: #fff; background: var(--teal); }
+    .question-list { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+    .question-card { min-width: 0; padding: clamp(1.1rem, 3vw, 1.55rem); border: 1px solid var(--line); border-radius: 1rem; background: #fff; }
+    .question-card h3 { color: var(--teal); font-size: clamp(1.35rem, 2.5vw, 1.7rem); }
+    .question-card > p { margin: .55rem 0 1rem; font-size: clamp(1.28rem, 2.8vw, 1.65rem); font-weight: 850; line-height: 1.75; }
+    .tag { display: inline-block; margin-bottom: .45rem; padding: .2rem .6rem; color: #fff; background: var(--blue); border-radius: 999px; font-size: 1rem; font-weight: 850; }
+    .answer-button { width: 100%; margin-top: .55rem; padding: .65rem; color: #fff; background: var(--teal); }
+    .answer-panel {
+      display: none; margin-top: .8rem; padding: clamp(1rem, 2.8vw, 1.45rem); border: .18rem solid var(--blue); border-radius: .9rem; background: #f4f8ff;
+    }
+    .answer-panel.show { display: block; animation: answer-pop .28s ease-out; }
+    .solve-head { display: flex; gap: .7rem; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+    .solve-step { padding: .3rem .7rem; color: #fff; background: var(--blue); border-radius: 999px; font-weight: 900; }
+    .solve-purpose { color: var(--muted); font-weight: 800; }
+    .solve-map { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .45rem; margin: .9rem 0; }
+    .solve-map-step {
+      min-height: 3.2rem; padding: .45rem .35rem; color: #214d70; background: #fff;
+      border: .12rem solid #8cb4d4; border-radius: .7rem; font: inherit; font-weight: 850; cursor: pointer;
+    }
+    .solve-map-step[aria-current="step"] { color: #fff; background: var(--blue); border-color: var(--blue); box-shadow: 0 0 0 .18rem #ffd36a; transform: translateY(-2px); }
+    .solve-map-step.done::before { content: '✓ '; color: var(--good); }
+    .solve-map-step[aria-current="step"]::before { color: #fff; }
+    .solve-title { margin-top: .8rem; color: var(--blue); font-size: clamp(1.35rem, 3vw, 1.8rem); }
+    .solve-speech {
+      min-height: 4.5rem; padding: .9rem; border-radius: .8rem; background: #fff;
+      font-size: clamp(1.22rem, 2.6vw, 1.55rem); font-weight: 750; line-height: 1.9; white-space: pre-line;
+    }
+    .solve-speech.final-answer {
+      color: var(--good); font-size: clamp(1.75rem, 4.5vw, 2.65rem); font-weight: 950; line-height: 1.45;
+      border: .16rem solid var(--good); background: #effff5;
+    }
+    .solve-check { margin: .65rem 0 0; padding: .75rem .9rem; border-left: .35rem solid var(--orange); background: #fff8e4; font-size: 1.08rem; line-height: 1.7; }
+    .solve-check strong { display: block; color: #8a4d00; font-size: 1.05em; }
+    .solve-controls { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: .7rem; }
+    .solve-controls button { padding: .5rem .72rem; }
+    .solve-controls button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+    .choice-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .6rem; margin-top: .8rem; }
+    .choice { padding: .8rem; color: var(--ink); background: #fff; text-align: left; }
+    .choice.correct { color: #fff; background: var(--good); }
+    .choice.incorrect { color: #fff; background: var(--bad); }
+    .choice-feedback { min-height: 2.2rem; padding-top: .5rem; font-weight: 850; }
+    details { border-top: 1px solid var(--line); padding-top: .7rem; }
+    summary { cursor: pointer; font-weight: 900; color: var(--teal); }
+    .live-status { position: fixed; left: 1rem; bottom: 1rem; z-index: 60; max-width: min(32rem, calc(100% - 2rem)); padding: .8rem 1rem; color: #fff; background: #132a28; border-radius: .8rem; box-shadow: var(--shadow); transform: translateY(140%); transition: transform .2s ease; }
+    .live-status.show { transform: translateY(0); }
+    footer { padding: 1rem 0 3rem; text-align: center; color: var(--muted); }
+    @keyframes answer-pop { from { transform: scale(.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    @keyframes attention { 0%,100% { box-shadow: 0 0 0 0 rgba(255,159,28,0); } 50% { box-shadow: 0 0 0 .55rem rgba(255,159,28,.48); transform: scale(1.025); } }
+    @keyframes nudge { 0%,100% { transform: translateX(0); } 50% { transform: translateX(.35rem); } }
+    @keyframes grid-trace { from { opacity: 0; stroke-dashoffset: 2; } to { opacity: 1; stroke-dashoffset: 0; } }
+    @media (max-width: 760px) {
+      .brand { width: 100%; }
+      .intro, .clock-stage, .area-wrap, .meter-wrap, .question-list { grid-template-columns: 1fr; }
+      .concept-strip { grid-template-columns: 1fr; }
+      .capacity-rule-grid { grid-template-columns: 1fr; }
+      .capacity-rule-grid .capacity-arrow { transform: rotate(90deg); justify-self: center; }
+      .capacity-workbench { grid-template-columns: 1fr; }
+      .misconception { grid-template-columns: 1fr; }
+      .unit-picker { grid-template-columns: repeat(2, 1fr); }
+      .coach-body { grid-template-columns: 1fr; }
+      .solve-map { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .quick-nav { top: 7.9rem; }
+    }
+    @media (max-width: 480px) {
+      .page-shell { width: min(100% - 1rem, 80rem); }
+      .toolbar { gap: .35rem; padding: .5rem; }
+      .tool-button { padding: .38rem .5rem; }
+      .quick-nav { top: 8.6rem; }
+      .choice-grid { grid-template-columns: 1fr; }
+    }
+    body.text-zoom .intro,
+    body.text-zoom .clock-stage,
+    body.text-zoom .area-wrap,
+    body.text-zoom .meter-wrap,
+    body.text-zoom .question-list,
+    body.text-zoom .concept-strip,
+    body.text-zoom .misconception { grid-template-columns: 1fr; }
+    body.text-zoom .coach-body,
+    body.text-zoom .unit-picker { grid-template-columns: 1fr; }
+    body.text-zoom .capacity-rule-grid,
+    body.text-zoom .capacity-workbench { grid-template-columns: 1fr; }
+    body.text-zoom .capacity-rule-grid .capacity-arrow { transform: rotate(90deg); justify-self: center; }
+    body.text-zoom .capacity-actions { grid-template-columns: 1fr; }
+    body.text-zoom .liter-bank { grid-template-columns: 1fr; }
+    body.text-zoom .brand { width: 100%; }
+    body.text-zoom .quick-nav { position: relative; top: auto; }
+    body.text-zoom .page-shell { width: min(100% - 1rem, 80rem); }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+    body.high-contrast {
+      --ink: #fff; --muted: #fff; --paper: #000; --surface: #000; --teal: #ffea00;
+      --teal-2: #00ffff; --blue: #7fc8ff; --yellow: #ffea00; --orange: #ff8c00;
+      --good: #55ff88; --bad: #ff8585; --line: #fff; --shadow: none;
+      color: #fff; background: #000;
+    }
+    body.high-contrast .toolbar { color: #000; background: #ffea00; border-bottom: 3px solid #fff; }
+    body.high-contrast .brand, body.high-contrast .tool-button { color: #000; }
+    body.high-contrast .tool-button { border-color: #000; }
+    body.high-contrast .tool-button:hover, body.high-contrast .tool-button[aria-pressed="true"] { color: #fff; background: #000; }
+    body.high-contrast .intro-copy, body.high-contrast .guided-coach, body.high-contrast .lesson, body.high-contrast .solution-bank,
+    body.high-contrast .question-card, body.high-contrast .lab, body.high-contrast .concept-strip > div,
+    body.high-contrast .answer-panel, body.high-contrast .group, body.high-contrast .count-result,
+    body.high-contrast .coach-script, body.high-contrast .solve-speech, body.high-contrast .solve-check { color: #fff; background: #000; }
+    body.high-contrast .today-card, body.high-contrast .action, body.high-contrast .step-button,
+    body.high-contrast .answer-button, body.high-contrast .filter-button[aria-pressed="true"] { color: #000; background: #ffea00; }
+    body.high-contrast .solve-map-step { color: #ffea00; background: #000; border-color: #ffea00; }
+    body.high-contrast .solve-map-step[aria-current="step"] { color: #000; background: #ffea00; box-shadow: 0 0 0 .18rem #fff; }
+    body.high-contrast .solve-map-step.done::before { color: #55ff88; }
+    body.high-contrast .solve-map-step[aria-current="step"]::before { color: #000; }
+    body.high-contrast .solve-check strong { color: #ffea00; }
+    body.high-contrast .quick-nav { background: #000; }
+    body.high-contrast .quick-nav a, body.high-contrast .filter-button { color: #ffea00; background: #000; border-color: #ffea00; }
+    body.high-contrast .coach-header, body.high-contrast .unit-button[aria-pressed="true"] { color: #000; background: #ffea00; }
+    body.high-contrast .unit-button { color: #ffea00; background: #000; border-color: #ffea00; }
+    body.high-contrast .unit-button span, body.high-contrast .unit-button[aria-pressed="true"] span { color: inherit; }
+    body.high-contrast .speech-char.spoken { color: #00ffff; }
+    body.high-contrast .speech-char.is-speaking { color: #000; background: #ffea00; }
+    body.high-contrast .unit-overlay .dash-fill, body.high-contrast .dash-unit-line { stroke: #ffea00; }
+    body.high-contrast .unit-legend { color: #fff; background: #000; border: 2px solid #ffea00; }
+    body.high-contrast .legend-square { background: #000; border-color: #ffea00; }
+    body.high-contrast .wrong { color: #fff; background: #2d0000; }
+    body.high-contrast .right { color: #fff; background: #002a10; }
+    body.high-contrast .big-output, body.high-contrast .time-node { color: #fff; background: #000; }
+    body.high-contrast .capacity-equation, body.high-contrast .capacity-model, body.high-contrast .capacity-controls,
+    body.high-contrast .capacity-rule-grid > div, body.high-contrast .liter-token, body.high-contrast .liter-empty,
+    body.high-contrast .volume-breakdown { color: #fff; background: #000; border-color: #ffea00; }
+    body.high-contrast .capacity-equation .unit-block { color: #000; background: #ffea00; border-color: #fff; }
+    body.high-contrast .capacity-model h4, body.high-contrast .capacity-controls h4,
+    body.high-contrast .remainder-copy strong, body.high-contrast .capacity-slider-label output { color: #00ffff; }
+    @media print {
+      .toolbar, .quick-nav, .action-row, .filter-bar, .live-status { display: none !important; }
+      body { background: #fff; color: #000; }
+      .intro-copy, .today-card, .lesson, .solution-bank { box-shadow: none; break-inside: avoid; }
+      .question-list { display: block; }
+      .question-card { margin: .6rem 0; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要內容</a>
+  <header class="toolbar" aria-label="無障礙工具列">
+    <div class="brand">數學自學助手</div>
+    <button class="tool-button" id="readPage" type="button">🔊 朗讀本段</button>
+    <button class="tool-button" id="stopSpeech" type="button">⏹ 停止</button>
+    <button class="tool-button" id="fontDown" type="button" aria-label="縮小字體">A−</button>
+    <button class="tool-button" id="fontUp" type="button" aria-label="放大字體">A＋</button>
+    <button class="tool-button" id="contrast" type="button" aria-pressed="false">◐ 高反差</button>
+  </header>
+
+  <main id="main" class="page-shell">
+    <section class="intro" aria-labelledby="page-title">
+      <div class="intro-copy">
+        <p class="eyebrow">國小三年級・第二學期</p>
+        <h1 id="page-title">選一題，讓助教一步一步陪你想</h1>
+        <p class="lead">先聽提示、看文字跟著變色，再動手操作。遇到不懂的地方，可以重聽這一步，不必一次看完整份答案。</p>
+        <div class="action-row">
+          <a class="action" href="#coach">開始助教導覽</a>
+          <a class="action secondary" href="#solutions">挑一題逐步解題</a>
+        </div>
+      </div>
+      <aside class="today-card" aria-label="學習方法">
+        <h2>三步驟</h2>
+        <strong>操作 → 想想 → 說明</strong>
+        <p>語音念到的文字會同步變色，操作按鈕會用動畫提示下一步；也可使用鍵盤 Tab 鍵。</p>
+      </aside>
+    </section>
+
+    <nav class="quick-nav" aria-label="單元導覽">
+      <a href="#coach">助教導覽</a><a href="#capacity">容量</a><a href="#time">時間</a><a href="#division">除法</a><a href="#area">面積</a><a href="#word">應用題</a><a href="#solutions">逐題解析</a>
+    </nav>
+
+    <section id="coach" class="guided-coach" aria-labelledby="coach-title">
+      <div class="coach-header">
+        <div class="coach-badge" aria-hidden="true">▶</div>
+        <div><h2 id="coach-title">語音導覽助教</h2><p>先選單元，再跟著三個小步驟前進。</p></div>
+      </div>
+      <div class="unit-picker" role="group" aria-label="選擇學習單元">
+        <button class="unit-button" type="button" data-guide="capacity" aria-pressed="true">容量<span>公升與毫升</span></button>
+        <button class="unit-button" type="button" data-guide="time" aria-pressed="false">時間<span>60 進位</span></button>
+        <button class="unit-button" type="button" data-guide="division" aria-pressed="false">除法<span>商與餘數</span></button>
+        <button class="unit-button" type="button" data-guide="area" aria-pressed="false">面積<span>完整格與半格</span></button>
+        <button class="unit-button" type="button" data-guide="word" aria-pressed="false">應用題<span>畫順序、選方法</span></button>
+      </div>
+      <div class="coach-body">
+        <div class="coach-main">
+          <div class="coach-step-line">
+            <span class="coach-step-label" id="coachStepLabel">第 1 步，共 3 步｜先抓住關係</span>
+            <div class="coach-progress" role="progressbar" aria-label="導覽進度" aria-valuemin="1" aria-valuemax="3" aria-valuenow="1"><span id="coachProgress"></span></div>
+          </div>
+          <p class="coach-script" id="coachScript" aria-live="polite">一公升等於一千毫升。看到公升和毫升時，先想像每一千毫升可以裝滿一個一公升的量杯。</p>
+          <div class="coach-controls">
+            <button class="step-button secondary" id="coachPrev" type="button" disabled>← 上一步</button>
+            <button class="step-button" id="coachSpeak" type="button">🔊 聽助教說</button>
+            <button class="step-button" id="coachNext" type="button">下一步 →</button>
+          </div>
+        </div>
+        <aside class="coach-side" aria-label="目前任務">
+          <strong>現在要做什麼？</strong>
+          <span id="coachTask">先記住一公升和毫升的關係。</span>
+          <button class="answer-button coach-action" id="coachAction" type="button">去看容量關係</button>
+        </aside>
+      </div>
+    </section>
+
+    <section id="capacity" class="lesson" data-readable aria-labelledby="capacity-title">
+      <div class="lesson-heading"><span class="lesson-number">1</span><div><h2 id="capacity-title">公升與毫升：每 1000 毫升換成 1 公升</h2><p>把很多毫升分成「完整的 1000」和「剩下的毫升」，換算就會很清楚。</p></div></div>
+      <div class="capacity-equation" role="note" aria-label="核心關係：1 公升等於 1000 毫升">
+        <span class="unit-block">1 公升</span><span aria-hidden="true">＝</span><span class="unit-block">1000 毫升</span>
+      </div>
+      <div class="concept-strip capacity-rule-grid" aria-label="毫升換成公升的三個步驟">
+        <div><strong>第 1 步｜看總量</strong><span>先讀出一共有多少毫升。</span></div>
+        <div class="capacity-arrow" aria-hidden="true">→</div>
+        <div><strong>第 2 步｜每 1000 分一組</strong><span>一個完整的 1000，就是 1 公升。</span></div>
+        <div class="capacity-arrow" aria-hidden="true">→</div>
+        <div><strong>第 3 步｜寫出剩餘量</strong><span>分完後剩下的，仍然用毫升表示。</span></div>
+      </div>
+      <div class="lab capacity-lab">
+        <h3 class="lab-title">容量拆分操作台</h3>
+        <p>拖曳滑桿或選一個例子。左邊會把每個完整的 1000 毫升排成一個「1 公升方塊」，並把剩下的毫升放進小量杯。</p>
+        <div class="capacity-workbench">
+          <div class="capacity-model" aria-labelledby="capacityModelTitle">
+            <h4 id="capacityModelTitle">看見「完整公升＋剩餘毫升」</h4>
+            <div id="literBank" class="liter-bank" aria-live="polite"></div>
+            <div class="remainder-zone">
+              <div class="measuring-cup remainder-cup" aria-hidden="true"><div class="water" id="water"></div><div class="measure-marks"></div><div class="water-label" id="waterLabel">0 毫升</div></div>
+              <div class="remainder-copy"><strong>分組後剩下</strong><span id="remainderText">0 毫升</span><small>還不滿 1 公升</small></div>
+            </div>
+          </div>
+          <div class="capacity-controls">
+            <h4>換你調整總容量</h4>
+            <label class="capacity-slider-label" for="volume"><strong>目前總量</strong><output id="volumeText" for="volume">5080 毫升</output></label>
+            <input id="volume" type="range" min="0" max="8000" step="1" value="5080">
+            <div class="range-scale" aria-hidden="true"><span>0 毫升</span><span>8000 毫升</span></div>
+            <div class="volume-breakdown" id="volumeBreakdown">5080 毫升＝5×1000 毫升＋80 毫升</div>
+            <div class="big-output" id="volumeResult" aria-live="polite">5080 毫升＝5 公升 80 毫升</div>
+            <div class="action-row capacity-actions"><button type="button" class="step-button" data-volume="2004">試試 2004 毫升</button><button type="button" class="step-button" data-volume="6105">試試 6105 毫升</button><button type="button" class="step-button" data-volume="7256">試試 7 公升 256 毫升</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="misconception">
+        <div class="wrong"><strong>常見迷思</strong>看到 4 公升，就在 4 後面加兩個 0，寫成 400 毫升。</div>
+        <div class="right"><strong>正確想法</strong>「一公升有一千毫升」，所以 4 公升＝4 個 1000＝4000 毫升。</div>
+      </div>
+    </section>
+
+    <section id="time" class="lesson" data-readable aria-labelledby="time-title">
+      <div class="lesson-heading"><span class="lesson-number">2</span><div><h2 id="time-title">時間：先分清楚「時刻」和「經過多久」</h2><p>時刻是時間線上的一個點；時間是兩個時刻之間的長度。</p></div></div>
+      <div class="clock-stage lab">
+        <svg class="clock" viewBox="0 0 200 200" role="img" aria-labelledby="clockDesc">
+          <title id="clockDesc">可調整的指針時鐘</title>
+          <circle class="clock-face" cx="100" cy="100" r="92"/>
+          <g id="clockMarks"></g>
+          <line id="hourHand" class="clock-hand clock-hour" x1="100" y1="100" x2="100" y2="48"/>
+          <line id="minuteHand" class="clock-hand" x1="100" y1="100" x2="100" y2="24"/>
+          <circle class="clock-center" cx="100" cy="100" r="7"/>
+        </svg>
+        <div>
+          <h3>從上午 11:43 走到中午 12:00</h3>
+          <div class="big-output" id="clockOutput" aria-live="polite">上午 11 時 43 分</div>
+          <div class="action-row"><button type="button" class="step-button" id="minuteStep">往前 1 分鐘</button><button type="button" class="step-button secondary" id="minuteFive">往前 5 分鐘</button><button type="button" class="step-button secondary" id="clockReset">重新開始</button></div>
+          <p id="elapsedText"><strong>已經過：0 分鐘</strong>。先走到 11:60，也就是 12:00。</p>
+        </div>
+      </div>
+      <div class="misconception">
+        <div class="wrong"><strong>常見迷思</strong>用 100－43＝57，以為一小時有 100 分鐘。</div>
+        <div class="right"><strong>正確想法</strong>一小時只有 60 分鐘，所以 60－43＝17 分鐘。</div>
+      </div>
+    </section>
+
+    <section id="division" class="lesson" data-readable aria-labelledby="division-title">
+      <div class="lesson-heading"><span class="lesson-number">3</span><div><h2 id="division-title">除法：先分組，再看剩下多少</h2><p>餘數一定要比除數小；如果不夠分成一整組，就是餘數。</p></div></div>
+      <div class="lab division-board">
+        <h3 class="lab-title">幫 55 位同學安排遊覽車</h3>
+        <p>每車坐 8 人。按下「分組」，看看 55 人能坐滿幾車，還有幾人需要另一車。</p>
+        <div class="items" id="people" aria-label="55位學生的圖示"></div>
+        <div class="groups" id="buses" aria-live="polite"></div>
+        <div class="action-row"><button type="button" class="step-button" id="groupPeople">分組</button><button type="button" class="step-button secondary" id="clearGroups">重來</button></div>
+        <div class="big-output" id="busResult">55 ÷ 8＝？</div>
+      </div>
+      <div class="misconception">
+        <div class="wrong"><strong>常見迷思</strong>55÷8＝6 餘 7，所以只準備 6 輛車。</div>
+        <div class="right"><strong>正確想法</strong>6 輛只能坐 48 人，剩下 7 人也要坐車，所以要準備 7 輛。</div>
+      </div>
+    </section>
+
+    <section id="area" class="lesson" data-readable aria-labelledby="area-title">
+      <div class="lesson-heading"><span class="lesson-number">4</span><div><h2 id="area-title">面積：數完整格，也別漏掉可以合起來的半格</h2><p>每一小格是 1 平方公分。兩個半格合起來，就是 1 個完整格。</p></div></div>
+      <div class="lab area-wrap">
+        <svg class="shape-grid decomposing" viewBox="0 0 16 10" role="img" aria-labelledby="shapeTitle shapeDesc">
+          <title id="shapeTitle">考卷中的方格面積圖</title>
+          <desc id="shapeDesc">十六欄、十列的一平方公分方格，上面有 A、B、C、D、E 五個圖形。選取圖形後，內部會以虛線標出每一個單位方格。</desc>
+          <defs>
+            <pattern id="grid" width="1" height="1" patternUnits="userSpaceOnUse"><path d="M 1 0 L 0 0 0 1" fill="none" class="grid-line"/></pattern>
+            <pattern id="dashGrid" width="1" height="1" patternUnits="userSpaceOnUse"><path d="M 1 0 L 0 0 0 1" class="dash-unit-line"/></pattern>
+          </defs>
+          <rect x="0" y="0" width="16" height="10" fill="url(#grid)" stroke="#60736f" stroke-width=".08"/>
+          <polygon class="shape selected-shape" data-base-shape="A" points="1,1 5,1 5,5 1,3"/>
+          <polygon class="shape b" data-base-shape="B" points="8,1 14,1 14,2 13,2 12,3 11,2 10,2 10,3 8,3"/>
+          <rect class="shape" data-base-shape="C" x="6" y="4" width="4" height="3"/>
+          <polygon class="shape b" data-base-shape="D" points="1,6 1,9 5,9"/>
+          <polygon class="shape e" data-base-shape="E" points="14,6 15,6 15,8 14,8 14,9 11,9 11,7 14,7"/>
+          <g class="unit-overlay show" data-overlay="A"><polygon class="dash-fill" points="1,1 5,1 5,5 1,3"/></g>
+          <g class="unit-overlay" data-overlay="B"><polygon class="dash-fill" points="8,1 14,1 14,2 13,2 12,3 11,2 10,2 10,3 8,3"/></g>
+          <g class="unit-overlay" data-overlay="D"><polygon class="dash-fill" points="1,6 1,9 5,9"/></g>
+          <g class="unit-overlay" data-overlay="E"><polygon class="dash-fill" points="14,6 15,6 15,8 14,8 14,9 11,9 11,7 14,7"/></g>
+          <text class="shape-label selected-label" data-shape-label="A" x="3.4" y="2.7">A</text>
+          <text class="shape-label" data-shape-label="B" x="11.9" y="1.7">B</text>
+          <text class="shape-label" data-shape-label="C" x="8" y="5.5">C</text>
+          <text class="shape-label" data-shape-label="D" x="2.4" y="8">D</text>
+          <text class="shape-label" data-shape-label="E" x="12.8" y="8">E</text>
+        </svg>
+        <div class="area-tools">
+          <h3>選一個圖形來拆解</h3>
+          <div class="unit-legend"><span class="legend-square" aria-hidden="true"></span><span>每個虛線方格代表 1 平方公分</span></div>
+          <button class="step-button area-choice" type="button" data-shape="A" aria-pressed="true">拆解 A</button>
+          <button class="step-button area-choice secondary" type="button" data-shape="B" aria-pressed="false">拆解 B</button>
+          <button class="step-button area-choice secondary" type="button" data-shape="D" aria-pressed="false">拆解 D</button>
+          <button class="step-button area-choice secondary" type="button" data-shape="E" aria-pressed="false">拆解 E</button>
+          <div id="areaResult" class="count-result" aria-live="polite">A＝上方長方形 4×2，加下方三角形 4×2÷2，所以是 12 平方公分。</div>
+        </div>
+      </div>
+      <div class="misconception">
+        <div class="wrong"><strong>常見迷思</strong>只數邊長，或看到斜線就覺得不能算。</div>
+        <div class="right"><strong>正確想法</strong>面積是在問「裡面有幾個單位方格」；斜線兩側的半格可以配成完整格。</div>
+      </div>
+    </section>
+
+    <section id="word" class="lesson" data-readable aria-labelledby="word-title">
+      <div class="lesson-heading"><span class="lesson-number">5</span><div><h2 id="word-title">應用題：先畫出事情的順序</h2><p>不要急著把看到的數字全部相加。先問：「我要找什麼？」</p></div></div>
+      <div class="lab">
+        <h3 class="lab-title">倒推起床時間</h3>
+        <p>7:50 要到學校；走路要 15 分鐘，刷牙洗臉和早餐要 25 分鐘。從最後的時間往前退。</p>
+        <div class="timeline" aria-label="起床到到校的時間線">
+          <div class="time-node">7:10<br>起床</div><div class="time-arrow"><span>25 分</span></div><div class="time-node">7:35<br>出門</div><div class="time-arrow"><span>15 分</span></div><div class="time-node">7:50<br>到校</div>
+        </div>
+        <div class="big-output">25＋15＝40 分鐘；7:50 往前 40 分鐘＝7:10</div>
+      </div>
+      <div class="misconception">
+        <div class="wrong"><strong>常見迷思</strong>把 7:50 加上 40 分鐘，算到 8:30。</div>
+        <div class="right"><strong>正確想法</strong>題目問「最晚幾點起床」，要從到校時刻往前倒推。</div>
+      </div>
+    </section>
+
+    <section id="solutions" class="solution-bank" aria-labelledby="solutions-title">
+      <h2 id="solutions-title">原考卷逐題解析</h2>
+      <p>每題拆成五個小步驟：「找線索、想方法、分步做、會檢查、寫答案」。每一步都用三年級孩子熟悉的說法講清楚，語音念到哪裡，文字就同步變色。</p>
+      <div class="filter-bar" role="group" aria-label="篩選題目">
+        <button class="filter-button" type="button" data-filter="all" aria-pressed="true">全部</button>
+        <button class="filter-button" type="button" data-filter="選擇">選擇題</button>
+        <button class="filter-button" type="button" data-filter="填充">填充題</button>
+        <button class="filter-button" type="button" data-filter="圖形">看圖題</button>
+        <button class="filter-button" type="button" data-filter="直式">直式題</button>
+        <button class="filter-button" type="button" data-filter="應用">應用題</button>
+      </div>
+      <div id="questionList" class="question-list"></div>
+    </section>
+  </main>
+
+  <footer>依照原考卷內容改編為自學用途。建議先操作、再作答，最後用自己的話說一次。</footer>
+  <div id="liveStatus" class="live-status" role="status" aria-live="polite"></div>
+
+  <script>
+    const questions = [
+      {cat:'選擇', no:'一、1', q:'下列哪一個容量說法正確？', a:'② 9000 毫升等於 9 公升', why:'1 公升＝1000 毫升，9000 裡有 9 個 1000。4 公升是 4000 毫升；6300 毫升是 6 公升 300 毫升；2500 毫升是 2 公升 500 毫升。', myth:'換單位不是只看 0 的個數，要先記住 1 公升＝1000 毫升。'},
+      {cat:'選擇', no:'一、2', q:'正方形色紙剪開後，重新拼成一個三角形，面積如何改變？', a:'④ 沒有改變', why:'剪開再重新排列，紙片沒有增加、減少或重疊，所以總面積不變。', myth:'形狀變了，不代表面積一定變了。'},
+      {cat:'選擇', no:'一、3', q:'上午 11 時 43 分，再過多久是中午 12 時？', a:'③ 17 分鐘', why:'一小時有 60 分鐘，所以 60－43＝17。', myth:'時間的進位是 60，不是 100。'},
+      {cat:'選擇', no:'一、4', q:'三位數、二位數分別除以個位數，下列哪個說法錯誤？', a:'③ 餘數可能是二位數', why:'除數是個位數時，餘數一定比除數小，因此不可能是二位數。', myth:'餘數的第一條規則：餘數＜除數。'},
+      {cat:'選擇', no:'一、5', q:'芳芳有 300 元，和兩位姊姊平均分擔 450 元蛋糕，芳芳還剩多少？', a:'① 150 元', why:'共有 3 人分擔，450÷3＝150；芳芳原有 300 元，300－150＝150 元。', myth:'「和兩位姊姊」表示總共有 3 人，不是 2 人。'},
+
+      {cat:'填充', no:'二、1', q:'利用 9÷3、64÷4 的規律完成四題。', a:'9÷3＝3；90÷3＝30；900÷3＝300；64÷4＝16；640÷4＝160', why:'被除數放大 10 倍，除數不變，商也放大 10 倍。', myth:'末尾的 0 不是消失，而是商的位值跟著放大。'},
+      {cat:'填充', no:'二、2', q:'蜂蜜水 580 mL、果汁 850 mL、鮮奶 420 mL，完成容量問題。', a:'最少：鮮奶 420 mL；相差 430 mL；蜂蜜水＋果汁＝1 L 430 mL；三種合計＝1 L 850 mL', why:'850－420＝430；580＋850＝1430；580＋850＋420＝1850。超過 1000 mL 時要換成公升與毫升。', myth:'1430 mL 是 1 L 430 mL，不是 14 L 30 mL。'},
+      {cat:'填充', no:'二、3', q:'判斷句子說的是「時間」還是「時刻」。', a:'① X　② O　③ X　④ O', why:'8:10、下午 4:00 是時間線上的點，屬於時刻；15 分鐘、10 分鐘是經過的長度，屬於時間。', myth:'有「幾時幾分」多半是時刻；有「多久、幾分鐘」多半是時間。'},
+      {cat:'填充', no:'二、4', q:'完成公升、毫升的換算。', a:'① 5080 mL　② 2 L 4 mL　③ 7256 mL　④ 6 L 105 mL', why:'每 1000 mL 換成 1 L，剩下的仍是 mL。', myth:'5 L 80 mL 中的 80 不需要補成 800；答案是 5080 mL。'},
+      {cat:'填充', no:'二、5', q:'哪些項目適合用「平方公分」表示？', a:'① O　② X　③ X　④ X　⑤ O', why:'平方公分是面積單位，適合教室桌面和黑板的大小；重量、長度、容量要用別的單位。', myth:'看到「大小」要再判斷它問的是面積、長度、重量或容量。'},
+
+      {cat:'圖形', no:'三、1', q:'把四個鐘面用 24 時制表示。', a:'左上 17:50；右上 10:05；左下 11:55；右下 16:35', why:'下午的時刻要把小時加 12；上午照原來時數寫，並把分鐘寫成兩位數。', myth:'下午 5 時不是 15 時，而是 17 時；是 5＋12。'},
+      {cat:'圖形', no:'三、2', q:'甲、乙長方形每小格邊長 2 cm，求長邊、短邊、面積與鋪滿張數。', a:'甲：長 6 cm、短 4 cm、面積 24 cm²；乙：長 12 cm、短 8 cm、面積 96 cm²；需要 4 張甲', why:'甲是 3×2 格，每格邊長 2 cm；乙是 6×4 格。96÷24＝4。', myth:'每格邊長是 2 cm，所以一格面積是 2×2＝4 cm²，不是 2 cm²。'},
+      {cat:'圖形', no:'三、3', q:'方格紙上的 A、B、C、D、E 圖形面積。', a:'A＝12 cm²；B＝9 cm²；C＝12 cm²；D＝8 cm²；E＝8 cm²；F＝36 cm²', why:'C＝4×3＝12；D＝4×4÷2＝8；F 是 A 的 3 倍，所以 12×3＝36。A、B、E 可用完整格加上合併後的半格計數。', myth:'斜邊切出的兩個半格可以合成一格；不要只數完整格。'},
+
+      {cat:'直式', no:'四、1', q:'474÷4', a:'118 餘 2', why:'4×118＝472，474－472＝2，而且 2＜4。', myth:'算完要用「除數×商＋餘數」驗算。'},
+      {cat:'直式', no:'四、2', q:'344÷8', a:'43 餘 0', why:'8×43＝344，剛好分完。', myth:'沒有剩下時，餘數是 0。'},
+      {cat:'直式', no:'四、3', q:'2 L 800 mL＋4 L 150 mL', a:'6 L 950 mL', why:'公升加公升、毫升加毫升：2＋4＝6，800＋150＝950。', myth:'單位要對齊；這題毫升沒有超過 1000，不需再進位。'},
+      {cat:'直式', no:'四、4', q:'6 L 320 mL－3 L 115 mL', a:'3 L 205 mL', why:'320－115＝205，6－3＝3。', myth:'先確認毫升夠不夠減；這題 320 大於 115，不必借 1 公升。'},
+
+      {cat:'應用', no:'五、1', q:'55 人參觀博物館，每 8 人搭一輛車，需要幾輛？', a:'7 輛', why:'55÷8＝6 餘 7。6 輛坐滿後還有 7 人，因此要再加 1 輛。', myth:'問「需要幾輛」時，有餘數通常要再加一個容器或一輛車。'},
+      {cat:'應用', no:'五、2', q:'1 L 450 mL 紅茶加 325 mL 柳丁汁，共有多少毫升？', a:'1775 毫升', why:'1 L 450 mL＝1450 mL；1450＋325＝1775 mL。', myth:'先統一單位再計算。'},
+      {cat:'應用', no:'五、3', q:'52 枝彩色鉛筆弄斷 4 枝，剩下的平均裝入 6 盒，每盒幾枝？', a:'8 枝', why:'先求剩下 52－4＝48，再平均分裝 48÷6＝8。', myth:'事情有先後：先扣掉壞掉的，再分裝。'},
+      {cat:'應用', no:'五、4', q:'7:50 到校，走路 15 分鐘，刷牙洗臉和早餐 25 分鐘，最晚幾點起床？', a:'上午 7 時 10 分', why:'準備和走路共 25＋15＝40 分鐘；從 7:50 往前 40 分鐘是 7:10。', myth:'「最晚起床」要往前倒推，不是往後加。'},
+      {cat:'應用', no:'五、5', q:'5 枝自動鉛筆共 158 元，500 元買 10 枝後，剩下的錢可買幾本 8 元筆記本？', a:'23 本', why:'10 枝是 5 枝的 2 倍，158×2＝316；500－316＝184；184÷8＝23。', myth:'158 元是 5 枝的總價，不是每枝的價格。'}
+    ];
+
+    const solutionDetails = {
+      '一、1': {
+        known:'1 公升等於 1000 毫升；四個選項把公升和毫升混在一起比較。',
+        ask:'找出哪一個容量換算完全正確。',
+        picture:'把每 1000 毫升想成裝滿一個 1 公升量杯。',
+        plan:'把每個選項都換成同一種單位，再逐一核對。',
+        work:['4 公升＝4×1000＝4000 毫升。','6300 毫升＝6 公升 300 毫升。','9000 毫升＝9×1000 毫升＝9 公升。','2500 毫升＝2 公升 500 毫升。'],
+        verify:'把 9 公升反過來換算：9×1000＝9000 毫升，左右相同。',
+        selfCheck:'換單位時，有沒有一直記得「一個公升要裝一千毫升」？'
+      },
+      '一、2': {
+        known:'同一張正方形色紙被剪開，再把原來的紙片重新排成三角形。',
+        ask:'判斷重新拼排後，總面積有沒有改變。',
+        picture:'把紙片想成拼圖：只是搬位置，紙片本身沒有變大或縮小。',
+        plan:'檢查有沒有增加紙片、拿走紙片、重疊或留下空洞。',
+        work:['剪開前，全部紙片合起來就是原來的正方形。','剪開後，每一片的面積都沒有改變。','重新拼時沒有增加、減少或重疊，所以每片面積相加仍相同。'],
+        verify:'把三角形拆開的紙片拼回正方形，仍能得到原來那一張紙。',
+        selfCheck:'形狀雖然變了，紙的份量有沒有變？'
+      },
+      '一、3': {
+        known:'開始時刻是上午 11 時 43 分，結束時刻是中午 12 時。',
+        ask:'求從 11:43 走到 12:00 一共經過幾分鐘。',
+        picture:'把分針從 43 分先走到 50 分，再走到 60 分。',
+        plan:'一小時有 60 分鐘，可以分兩小段相加。',
+        work:['43 分到 50 分，要走 7 分鐘。','50 分到 60 分，要走 10 分鐘。','7＋10＝17，所以一共經過 17 分鐘。'],
+        verify:'43＋17＝60，剛好到下一個整點 12:00。',
+        selfCheck:'有沒有用 60 分鐘進位，而不是把時間當成 100 進位？'
+      },
+      '一、4': {
+        known:'除數是個位數，也就是最多只有 9；餘數一定要比除數小。',
+        ask:'找出四個除法說法中不正確的一個。',
+        picture:'把物品分組後，剩下的如果還夠再分一組，就不能叫餘數。',
+        plan:'用「餘數小於除數」這條規則檢查選項。',
+        work:['如果除數是 8，餘數只能是 0、1、2、3、4、5、6、7。','就算除數最大是 9，餘數最大也只能是 8。','因此除數是個位數時，餘數不可能是二位數。'],
+        verify:'假如餘數是 12，因為 12 還能再分出至少一組，原來的商就還可以增加，不符合餘數的意思。',
+        selfCheck:'算完除法後，有沒有比較「餘數」和「除數」誰比較小？'
+      },
+      '一、5': {
+        known:'芳芳原有 300 元；蛋糕 450 元；芳芳和兩位姊姊一起平均分擔。',
+        ask:'求芳芳付完自己那一份後，還剩多少元。',
+        picture:'畫三個人：芳芳 1 人，加上兩位姊姊，共有 3 人。',
+        plan:'先算每個人要付多少，再用芳芳原有的錢減掉她付的錢。',
+        work:['分擔的人數：1＋2＝3 人。','每人要付：450÷3＝150 元。','芳芳剩下：300－150＝150 元。'],
+        verify:'150×3＝450，三個人付的錢剛好等於蛋糕價格；300－150 也確實是 150。',
+        selfCheck:'「和兩位姊姊」是不是包含芳芳自己，所以總共有 3 人？'
+      },
+      '二、1': {
+        known:'已知 9÷3＝3，也知道 64÷4＝16；其他算式只是在被除數後面增加 0。',
+        ask:'利用原來的除法事實，完成放大 10 倍或 100 倍後的商。',
+        picture:'把 9 個物品平均分成 3 組，每組 3 個；變成 90 個時，每組就變成 30 個。',
+        plan:'除數不變時，被除數放大幾倍，商也跟著放大幾倍。',
+        work:['9÷3＝3。','90 是 9 的 10 倍，所以 90÷3＝30。','900 是 9 的 100 倍，所以 900÷3＝300。','64÷4＝16；640 是 64 的 10 倍，所以 640÷4＝160。'],
+        verify:'用乘法反查：30×3＝90、300×3＝900、160×4＝640。',
+        selfCheck:'商的位值有沒有跟著放大，而不是把被除數末尾的 0 丟掉？'
+      },
+      '二、2': {
+        known:'蜂蜜水 580 毫升、果汁 850 毫升、鮮奶 420 毫升。',
+        ask:'找最少的飲料、算相差量，並完成兩種與三種飲料的合計。',
+        picture:'把三杯飲料排成高低不同的量杯，先比較高度，再把容量倒在一起。',
+        plan:'比較用大小；相差用減法；合起來用加法；每滿 1000 毫升換成 1 公升。',
+        work:['420 最小，所以鮮奶最少。','最多和最少相差：850－420＝430 毫升。','蜂蜜水加果汁：580＋850＝1430 毫升＝1 公升 430 毫升。','三種合計：1430＋420＝1850 毫升＝1 公升 850 毫升。'],
+        verify:'420＋430＝850，能回到果汁容量；1000＋850＝1850，也和三杯相加相同。',
+        selfCheck:'超過 1000 毫升時，有沒有正確換成「幾公升、剩幾毫升」？'
+      },
+      '二、3': {
+        known:'「時刻」是鐘面上的一個點，例如 8 時 10 分；「時間」是經過的長度，例如 15 分鐘。',
+        ask:'逐句判斷它在說一個時刻，還是一段經過時間。',
+        picture:'把一天想成時間線：時刻像線上的點，經過時間像兩點之間的一段線。',
+        plan:'看到「幾時幾分」先想時刻；看到「多久、幾分鐘」先想經過時間。',
+        work:['第 1、3 句是在說鐘面上的一個點，依考卷規則判為 X。','第 2、4 句是在說經過多久，依考卷規則判為 O。','所以依序填入 X、O、X、O。'],
+        verify:'試著在時間線上畫：能畫成一個點的是時刻；要畫成一段長度的是時間。',
+        selfCheck:'有沒有只看「分」這個字就作答？要看它是「幾分」還是「幾分鐘」。'
+      },
+      '二、4': {
+        known:'1 公升＝1000 毫升；題目要在公升和毫升之間來回換算。',
+        ask:'完成四個容量換算空格。',
+        picture:'每湊滿 1000 毫升，就裝進一個 1 公升的大量杯；沒滿的留在小量杯。',
+        plan:'公升換毫升就乘 1000 再加零頭；毫升換公升就每 1000 分成一組。',
+        work:['5 公升 80 毫升＝5000＋80＝5080 毫升。','2004 毫升＝2 個 1000 毫升，還剩 4 毫升＝2 公升 4 毫升。','7 公升 256 毫升＝7000＋256＝7256 毫升。','6105 毫升＝6 個 1000 毫升，還剩 105 毫升＝6 公升 105 毫升。'],
+        verify:'把每一題反向換算一次，例如 2 公升 4 毫升＝2000＋4＝2004 毫升。',
+        selfCheck:'80 毫升就是 80，不要因為位數較少就誤寫成 800 毫升。'
+      },
+      '二、5': {
+        known:'平方公分是面積單位，用來表示一個平面有多大。',
+        ask:'找出哪些項目適合使用平方公分。',
+        picture:'想像用一張張 1 平方公分的小方紙，把物體表面鋪滿。',
+        plan:'每一項都問自己：它量的是表面大小，還是長度、重量、容量？',
+        work:['第 1、5 項是在量平面的大小，可以用平方公分，所以填 O。','第 2、3、4 項量的不是面積，應使用長度、重量或容量單位，所以填 X。','依序得到 O、X、X、X、O。'],
+        verify:'如果可以用小方格把那個表面鋪滿並計數，就適合用面積單位。',
+        selfCheck:'不要只看到「大小」就選面積，要確認題目量的是哪一種量。'
+      },
+      '三、1': {
+        known:'四個鐘面分別表示上午或下午的時刻，要改寫成 24 時制。',
+        ask:'依序寫出四個鐘面的 24 時制時間。',
+        picture:'24 時制像一條從 0 時走到 23 時的時間線；下午要接在 12 時後面。',
+        plan:'上午時刻照原來寫；下午 1 時到 11 時，把小時數加 12；分鐘要寫兩位數。',
+        work:['下午 5 時 50 分：5＋12＝17，所以是 17:50。','上午 10 時 5 分：小時不變，5 分補成 05，所以是 10:05。','上午 11 時 55 分：寫成 11:55。','下午 4 時 35 分：4＋12＝16，所以是 16:35。'],
+        verify:'把 17 和 16 分別減 12，會回到下午 5 時和下午 4 時。',
+        selfCheck:'下午 5 時是 17 時，不是 15 時；分鐘只有一位數時要補 0。'
+      },
+      '三、2': {
+        known:'甲是 3×2 格，乙是 6×4 格；每一小格的邊長是 2 公分。',
+        ask:'求甲、乙的長邊、短邊、面積，以及乙可鋪幾張甲。',
+        picture:'一小格不是 1 平方公分，而是邊長 2 公分的正方形，面積是 2×2＝4 平方公分。',
+        plan:'先用格數乘 2 求邊長，再用長×寬求面積，最後用乙面積÷甲面積求張數。',
+        work:['甲：長邊 3×2＝6 公分，短邊 2×2＝4 公分，面積 6×4＝24 平方公分。','乙：長邊 6×2＝12 公分，短邊 4×2＝8 公分，面積 12×8＝96 平方公分。','鋪滿張數：96÷24＝4，所以需要 4 張甲。'],
+        verify:'24×4＝96，四張甲的總面積剛好等於乙。',
+        selfCheck:'有沒有把「一格邊長 2 公分」誤當成「一格面積 2 平方公分」？'
+      },
+      '三、3': {
+        known:'每一小格是 1 平方公分；A、B、D 有斜邊，半格可以兩兩合成完整格。',
+        ask:'求 A、B、C、D、E 的面積，並求 3 個 A 合成的 F 面積。',
+        picture:'先把完整格塗一種顏色，再把兩個半格配成一個完整格。',
+        plan:'長方形可用長×寬；三角形可用底×高÷2；不規則圖可數完整格再配半格。',
+        work:['A：4×2＋4×2÷2＝8＋4＝12 平方公分。','B：6 個上方完整格＋2 個左下完整格＋兩個半格合成 1 格＝9 平方公分。','C：4×3＝12 平方公分。','D：4×4÷2＝8 平方公分。','E：上排 4 格＋下排 3 格＋右上 1 格＝8 平方公分。','F：3 個 A，所以 12×3＝36 平方公分。'],
+        verify:'A、B、D、E 都可以回到上方互動圖，打開虛線單位格重新數一次。',
+        selfCheck:'斜邊旁的半格有沒有漏掉？兩個半格要合成 1 格。'
+      },
+      '四、1': {
+        known:'474 要平均分成 4 組，要從最高位開始做除法。',
+        ask:'算出 474÷4 的商和餘數。',
+        picture:'先分 4 個百，再分 7 個十，最後分 4 個一。',
+        plan:'每一位都照「除、乘、減、落」的順序；不夠分的和下一位合起來。',
+        work:['百位：4÷4＝1，在商的百位寫 1，剩 0。','十位：7÷4＝1，在商的十位寫 1，7－4＝3 個十。','把個位 4 落下來，變成 34。','個位：34÷4＝8，4×8＝32，34－32＝2。','所以商是 118，餘數是 2。'],
+        verify:'4×118＋2＝472＋2＝474，而且餘數 2 小於除數 4。',
+        selfCheck:'最後有沒有寫餘數，並檢查餘數比 4 小？'
+      },
+      '四、2': {
+        known:'344 要平均分成 8 組；最高位的 3 不夠分成 8 組。',
+        ask:'算出 344÷8 的商。',
+        picture:'3 個百不夠分，就把它和下一位合起來看成 34 個十。',
+        plan:'前一位不夠除時，和下一位合起來，再繼續除、乘、減、落。',
+        work:['先看 34：34÷8＝4，在商的十位寫 4。','8×4＝32，34－32＝2。','把個位的 4 落下來，變成 24。','24÷8＝3，剛好分完，所以商是 43。'],
+        verify:'8×43＝344，和原來的被除數完全相同，所以餘數是 0。',
+        selfCheck:'百位 3 不夠除時，有沒有改看前兩位 34？'
+      },
+      '四、3': {
+        known:'要把 2 公升 800 毫升和 4 公升 150 毫升相加。',
+        ask:'求兩個容量合起來共有多少公升、多少毫升。',
+        picture:'把公升放在大杯區，毫升放在小杯區，同單位對齊再相加。',
+        plan:'先加毫升，再加公升；如果毫升滿 1000，才進 1 公升。',
+        work:['毫升：800＋150＝950 毫升。','950 沒有滿 1000，所以不需要進位。','公升：2＋4＝6 公升。','合起來是 6 公升 950 毫升。'],
+        verify:'把 6 公升 950 毫升換成 6950 毫升；2800＋4150 也等於 6950。',
+        selfCheck:'直式有沒有把公升對公升、毫升對毫升？'
+      },
+      '四、4': {
+        known:'要從 6 公升 320 毫升減去 3 公升 115 毫升。',
+        ask:'求相減後剩下多少容量。',
+        picture:'把公升和毫升分成兩欄，先看毫升欄夠不夠減。',
+        plan:'同單位對齊相減；只有上方毫升不夠減時，才需要借 1 公升當 1000 毫升。',
+        work:['毫升：320－115＝205 毫升，因為 320 大於 115，不用借位。','公升：6－3＝3 公升。','合起來是 3 公升 205 毫升。'],
+        verify:'3 公升 205 毫升＋3 公升 115 毫升＝6 公升 320 毫升。',
+        selfCheck:'這題毫升夠減，不要多借 1 公升。'
+      },
+      '五、1': {
+        known:'共有 55 人；每輛車最多坐 8 人。',
+        ask:'求讓每一位同學都有座位，至少需要幾輛車。',
+        picture:'每 8 人圈成一組，圈滿的每一組坐一輛車，剩下的人也要一輛車。',
+        plan:'先用除法求完整的 8 人組和餘數，再判斷餘數需不需要增加一輛。',
+        work:['55÷8＝6 餘 7。','6 輛坐滿可載 6×8＝48 人。','還剩 55－48＝7 人，這 7 人也要坐車。','所以 6＋1＝7，需要 7 輛車。'],
+        verify:'7 輛共有 7×8＝56 個座位，能坐下 55 人；6 輛只有 48 個座位，不夠。',
+        selfCheck:'有餘數時，有沒有回到生活情境想「剩下的人怎麼辦」？'
+      },
+      '五、2': {
+        known:'紅茶有 1 公升 450 毫升，柳丁汁有 325 毫升。',
+        ask:'求兩種飲料合起來共有多少毫升。',
+        picture:'先把 1 公升倒成 1000 毫升，所有容量都用毫升表示。',
+        plan:'先統一單位，再做加法。',
+        work:['1 公升 450 毫升＝1000＋450＝1450 毫升。','1450＋325，可以先加 300 得 1750。','再加 25：1750＋25＝1775 毫升。'],
+        verify:'1775－325＝1450，能回到原來的紅茶容量。',
+        selfCheck:'相加前有沒有把公升換成毫升，避免不同單位直接相加？'
+      },
+      '五、3': {
+        known:'原有 52 枝彩色鉛筆，先弄斷 4 枝，再把剩下的平均裝入 6 盒。',
+        ask:'求每盒可以裝幾枝完整的彩色鉛筆。',
+        picture:'先把 4 枝壞掉的拿走，再把剩下的分成 6 個一樣多的盒子。',
+        plan:'事情有先後：先用減法求剩下數量，再用除法平均分。',
+        work:['完整鉛筆：52－4＝48 枝。','平均分成 6 盒：48÷6＝8 枝。','所以每盒放 8 枝。'],
+        verify:'8×6＝48，再把壞掉的 4 枝加回去：48＋4＝52。',
+        selfCheck:'有沒有先扣掉壞掉的 4 枝，再把剩下的分裝？'
+      },
+      '五、4': {
+        known:'到校時刻是 7:50；走路要 15 分鐘；刷牙洗臉和早餐要 25 分鐘。',
+        ask:'求最晚幾點起床，才來得及在 7:50 到校。',
+        picture:'畫時間線，最右邊是 7:50 到校，沿著箭頭往左退回起床時刻。',
+        plan:'看到「最晚幾點起床」，要從到校時刻往前減，不是往後加。',
+        work:['先算總共需要：25＋15＝40 分鐘。','從 7:50 往前退 15 分鐘，到 7:35，這是出門時刻。','再從 7:35 往前退 25 分鐘，到 7:10。','所以最晚要在上午 7 時 10 分起床。'],
+        verify:'從 7:10 開始，經過 25 分鐘到 7:35，再經過 15 分鐘到 7:50，剛好準時。',
+        selfCheck:'題目問的是「起床時刻」，有沒有從最後的到校時刻往前推？'
+      },
+      '五、5': {
+        known:'5 枝自動鉛筆共 158 元；有 500 元；要買 10 枝；一本筆記本 8 元。',
+        ask:'求買完 10 枝自動鉛筆後，剩下的錢最多可買幾本筆記本。',
+        picture:'10 枝就是兩組 5 枝，所以先找兩組自動鉛筆的總價，再看剩下多少錢。',
+        plan:'先倍數算鉛筆總價，再用減法算剩餘金額，最後用除法算筆記本本數。',
+        work:['10 枝是 5 枝的 2 倍，所以鉛筆總價：158×2＝316 元。','剩下的錢：500－316＝184 元。','可買筆記本：184÷8＝23 本。'],
+        verify:'23×8＝184；316＋184＝500，兩部分加回去剛好是原有的 500 元。',
+        selfCheck:'158 元是 5 枝的總價，不是 1 枝的價錢。'
+      }
+    };
+    questions.forEach(question => Object.assign(question, solutionDetails[question.no]));
+
+    const learningGuides = {
+      capacity: [
+        {title:'先抓住關係', text:'一公升等於一千毫升。看到公升和毫升時，先想像每一千毫升可以裝滿一個一公升的量杯。', task:'先記住一公升和毫升的關係。', action:'去看容量關係', target:'#capacity .concept-strip'},
+        {title:'把數量拆開', text:'例如五千零八十毫升，可以先拿出五個一千毫升，還剩八十毫升，所以是五公升八十毫升。', task:'找出有幾個一千，再看剩下多少。', action:'看五千零八十毫升', target:'#volumeResult'},
+        {title:'換你動手試', text:'請拖動容量滑桿，或點選一個數量。每改變一次，都說出有幾公升、還剩幾毫升。', task:'操作量杯，自己說一次答案。', action:'去操作量杯', target:'#volume'}
+      ],
+      time: [
+        {title:'先看進位', text:'時間不是一百進位。一小時有六十分鐘，所以從十一時四十三分走到十二時，要看六十減四十三。', task:'先記住一小時有六十分鐘。', action:'去看時鐘', target:'#clockOutput'},
+        {title:'一段一段走', text:'不要急著一次心算。讓分針先從四十三走到五十，再從五十走到六十，合起來就是十七分鐘。', task:'把經過時間拆成容易算的小段。', action:'看分針怎麼走', target:'#minuteFive'},
+        {title:'換你控制分針', text:'請按往前一分鐘或往前五分鐘，直到中午十二時。觀察總共經過多少分鐘。', task:'操作分針走到中午十二時。', action:'去推動分針', target:'#minuteStep'}
+      ],
+      division: [
+        {title:'先決定每組多少', text:'五十五人，每八人坐一輛車。先把八人圈成一組，看看能圈出幾個完整的八人組。', task:'先找完整的八人組。', action:'去看五十五人', target:'#people'},
+        {title:'再看剩下多少', text:'六個八人組是四十八人，五十五減四十八，還剩七人。七比八小，所以七是餘數。', task:'檢查餘數一定要比除數小。', action:'開始分組', target:'#groupPeople'},
+        {title:'回答生活問題', text:'雖然算式是六餘七，但剩下的七人也需要一輛車。因此不是六輛，而是七輛。', task:'分組後，看看最後一輛車坐幾人。', action:'去安排遊覽車', target:'#groupPeople'}
+      ],
+      area: [
+        {title:'先找單位方格', text:'面積是在問圖形裡面有幾個一平方公分的方格，不是在數外面的邊有多長。', task:'先確認每一小格代表一平方公分。', action:'去看方格圖', target:'.shape-grid'},
+        {title:'完整格先數', text:'先數完整的方格。遇到斜線時，把兩個相同大小的半格配在一起，就會變成一個完整格。', task:'把半格兩兩配對。', action:'拆解圖形 A', target:'.area-choice[data-shape="A"]'},
+        {title:'換一種方法檢查', text:'三角形可以用底乘高再除以二。用方格計數和公式各算一次，答案相同才更安心。', task:'選一個圖形，聽它如何拆解。', action:'去拆解圖形', target:'.area-choice[data-shape="D"]'}
+      ],
+      word: [
+        {title:'先找問題', text:'讀應用題時，先暫停計算。問自己：題目最後要我找的是人數、時間、容量，還是錢？', task:'先說出題目真正要找的東西。', action:'看應用題方法', target:'#word .lesson-heading'},
+        {title:'畫出事情順序', text:'如果事情有先後，就把它畫成時間線或流程。看到最晚起床，表示要從到校時間往前倒推。', task:'判斷要往前算還是往後算。', action:'去看時間線', target:'#word .timeline'},
+        {title:'分段列式並檢查', text:'先算準備和走路一共四十分鐘，再從七時五十分往前四十分鐘。最後檢查七時十分加四十分，是否回到七時五十分。', task:'說出算式，也用反方向驗算。', action:'去做應用題', target:'#solutions'}
+      ]
+    };
+
+    const $ = (s, root=document) => root.querySelector(s);
+    const $$ = (s, root=document) => [...root.querySelectorAll(s)];
+    const status = $('#liveStatus');
+    let statusTimer;
+    function announce(text) {
+      status.textContent = text; status.classList.add('show');
+      clearTimeout(statusTimer); statusTimer = setTimeout(() => status.classList.remove('show'), 2800);
+    }
+    const normalizeSpeech = text => text.replace(/cm²/g, '平方公分').replace(/mL/g, '毫升').replace(/L/g, '公升');
+    let speechRun = 0, highlightTimer = null, activeSpeechElement = null;
+    function paintSpeech(element, text) {
+      if (!element) return [];
+      const spokenText = normalizeSpeech(text);
+      element.textContent = '';
+      element.setAttribute('aria-label', spokenText);
+      return Array.from(spokenText).map((char, index) => {
+        const span = document.createElement('span');
+        span.className = 'speech-char'; span.textContent = char; span.dataset.char = index; span.setAttribute('aria-hidden','true');
+        element.appendChild(span); return span;
+      });
+    }
+    function markSpeech(chars, index) {
+      if (!chars.length) return;
+      const safe = Math.max(0, Math.min(chars.length - 1, index));
+      chars.forEach((char, i) => {
+        char.classList.toggle('spoken', i < safe);
+        char.classList.toggle('is-speaking', i === safe);
+      });
+    }
+    function stopSpeaking(showStatus=false) {
+      speechRun++; clearInterval(highlightTimer); highlightTimer = null;
+      window.speechSynthesis?.cancel();
+      if (activeSpeechElement) $$('.speech-char', activeSpeechElement).forEach(c => c.classList.remove('is-speaking'));
+      activeSpeechElement = null;
+      if (showStatus) announce('已停止朗讀');
+    }
+    function speak(text, highlightElement=null, onEnd=null) {
+      if (!('speechSynthesis' in window)) { announce('這個瀏覽器不支援語音朗讀。'); return; }
+      stopSpeaking();
+      const run = ++speechRun, spokenText = normalizeSpeech(text);
+      const chars = highlightElement ? paintSpeech(highlightElement, spokenText) : [];
+      activeSpeechElement = highlightElement;
+      let fallbackIndex = 0, lastBoundary = Date.now();
+      if (chars.length) {
+        markSpeech(chars, 0);
+        highlightTimer = setInterval(() => {
+          if (run !== speechRun) return;
+          if (Date.now() - lastBoundary > 420) markSpeech(chars, Math.min(chars.length - 1, ++fallbackIndex));
+        }, 190);
+      }
+      const utterance = new SpeechSynthesisUtterance(spokenText);
+      utterance.lang = 'zh-TW'; utterance.rate = .88; utterance.pitch = 1;
+      utterance.onboundary = event => {
+        if (run !== speechRun || !chars.length) return;
+        lastBoundary = Date.now(); fallbackIndex = event.charIndex; markSpeech(chars, event.charIndex);
+      };
+      utterance.onend = () => {
+        if (run !== speechRun) return;
+        clearInterval(highlightTimer); highlightTimer = null;
+        chars.forEach(c => { c.classList.remove('is-speaking'); c.classList.add('spoken'); });
+        activeSpeechElement = null; if (onEnd) onEnd();
+      };
+      utterance.onerror = () => { if (run === speechRun) { clearInterval(highlightTimer); highlightTimer = null; activeSpeechElement = null; } };
+      speechSynthesis.speak(utterance);
+    }
+
+    let scale = 1;
+    function setScale(next) {
+      scale = Math.max(1, Math.min(2, Math.round(next * 10) / 10));
+      document.documentElement.style.setProperty('--scale', scale);
+      document.body.classList.toggle('text-zoom', scale >= 1.4);
+      announce(`字體大小 ${Math.round(scale * 100)}%`);
+    }
+    $('#fontUp').addEventListener('click', () => setScale(scale + .1));
+    $('#fontDown').addEventListener('click', () => setScale(scale - .1));
+    $('#contrast').addEventListener('click', e => {
+      const on = document.body.classList.toggle('high-contrast');
+      e.currentTarget.setAttribute('aria-pressed', on); announce(on ? '已開啟高反差' : '已關閉高反差');
+    });
+    $('#stopSpeech').addEventListener('click', () => stopSpeaking(true));
+    $('#readPage').addEventListener('click', () => {
+      const readable = $$('[data-readable], .solution-bank');
+      const section = readable.find(s => {
+        const rect = s.getBoundingClientRect();
+        return rect.top <= innerHeight * .45 && rect.bottom >= innerHeight * .25;
+      }) || readable[0] || $('#main');
+      speak(section.innerText);
+    });
+
+    function pulse(element) {
+      if (!element) return;
+      element.classList.remove('attention-pulse');
+      requestAnimationFrame(() => element.classList.add('attention-pulse'));
+      setTimeout(() => element.classList.remove('attention-pulse'), 3400);
+    }
+    let currentGuide = 'capacity', guideStep = 0;
+    function renderCoach(readAloud=false) {
+      const step = learningGuides[currentGuide][guideStep];
+      $('#coachStepLabel').textContent = `第 ${guideStep + 1} 步，共 3 步｜${step.title}`;
+      $('#coachTask').textContent = step.task;
+      $('#coachAction').textContent = step.action;
+      $('#coachProgress').style.width = `${(guideStep + 1) / 3 * 100}%`;
+      $('.coach-progress').setAttribute('aria-valuenow', guideStep + 1);
+      $('#coachPrev').disabled = guideStep === 0;
+      $('#coachNext').textContent = guideStep === 2 ? '完成，去操作 →' : '下一步 →';
+      paintSpeech($('#coachScript'), step.text);
+      if (readAloud) speak(step.text, $('#coachScript'), () => pulse(guideStep === 2 ? $('#coachAction') : $('#coachNext')));
+    }
+    $$('.unit-button').forEach(button => button.addEventListener('click', () => {
+      $$('.unit-button').forEach(b => b.setAttribute('aria-pressed', 'false'));
+      button.setAttribute('aria-pressed', 'true'); currentGuide = button.dataset.guide; guideStep = 0;
+      renderCoach(true);
+    }));
+    $('#coachSpeak').addEventListener('click', () => {
+      const step = learningGuides[currentGuide][guideStep];
+      speak(step.text, $('#coachScript'), () => pulse(guideStep === 2 ? $('#coachAction') : $('#coachNext')));
+    });
+    $('#coachPrev').addEventListener('click', () => { if (guideStep > 0) { guideStep--; renderCoach(true); } });
+    $('#coachNext').addEventListener('click', () => {
+      if (guideStep < 2) { guideStep++; renderCoach(true); }
+      else $('#coachAction').click();
+    });
+    $('#coachAction').addEventListener('click', () => {
+      const target = $(learningGuides[currentGuide][guideStep].target);
+      if (!target) return;
+      target.scrollIntoView({behavior:'smooth', block:'center'}); pulse(target);
+      if (target.matches('button, input, [tabindex]')) setTimeout(() => target.focus({preventScroll:true}), 450);
+    });
+    renderCoach();
+
+    const volume = $('#volume');
+    function updateVolume(v) {
+      v = Number(v); volume.value = v;
+      const liters = Math.floor(v / 1000), ml = v % 1000;
+      const literBank = $('#literBank');
+      literBank.innerHTML = liters
+        ? Array.from({length: liters}, (_, index) => `<div class="liter-token"><span>第 ${index + 1} 個</span><small>1 公升｜1000 毫升</small></div>`).join('')
+        : '<div class="liter-empty">還沒有湊滿 1 個完整的 1000 毫升</div>';
+      literBank.setAttribute('aria-label', liters ? `${liters} 個完整的 1 公升` : '目前沒有完整的 1 公升');
+      $('#water').style.height = `${Math.min(100, ml / 10)}%`;
+      $('#waterLabel').textContent = `${ml} 毫升`;
+      $('#remainderText').textContent = `${ml} 毫升`;
+      $('#volumeText').textContent = `${v} 毫升`;
+      $('#volumeBreakdown').textContent = `${v} 毫升＝${liters}×1000 毫升＋${ml} 毫升`;
+      const converted = liters && ml ? `${liters} 公升 ${ml} 毫升` : liters ? `${liters} 公升` : `${ml} 毫升`;
+      $('#volumeResult').textContent = `${v} 毫升＝${converted}`;
+      volume.setAttribute('aria-valuetext', `${v} 毫升，也就是 ${converted}`);
+    }
+    volume.addEventListener('input', e => updateVolume(e.target.value));
+    $$('[data-volume]').forEach(b => b.addEventListener('click', () => { updateVolume(b.dataset.volume); speak($('#volumeResult').textContent, $('#volumeResult')); }));
+    updateVolume(volume.value);
+
+    const marks = $('#clockMarks');
+    for (let i=0; i<60; i++) {
+      const angle = i * 6 * Math.PI / 180, long = i % 5 === 0;
+      const r1 = long ? 78 : 84, r2 = 89;
+      const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1', 100 + Math.sin(angle)*r1); line.setAttribute('y1', 100 - Math.cos(angle)*r1);
+      line.setAttribute('x2', 100 + Math.sin(angle)*r2); line.setAttribute('y2', 100 - Math.cos(angle)*r2);
+      line.setAttribute('class','clock-mark'); marks.appendChild(line);
+    }
+    let clockMinute = 43;
+    function renderClock() {
+      const total = 11*60 + clockMinute;
+      const hour = Math.floor(total/60) % 12, minute = total % 60;
+      $('#minuteHand').style.transform = `rotate(${minute*6}deg)`;
+      $('#hourHand').style.transform = `rotate(${hour*30 + minute*.5}deg)`;
+      const displayHour = Math.floor(total/60) > 11 ? 12 : 11;
+      $('#clockOutput').textContent = `${displayHour === 12 ? '中午' : '上午'} ${displayHour} 時 ${String(minute).padStart(2,'0')} 分`;
+      const elapsed = clockMinute - 43;
+      $('#elapsedText').innerHTML = `<strong>已經過：${elapsed} 分鐘</strong>${elapsed === 17 ? '。到中午了！' : '。先走到 11:60，也就是 12:00。'}`;
+    }
+    function addMinutes(n) { clockMinute = Math.min(60, clockMinute+n); renderClock(); if(clockMinute===60) speak('答案是十七分鐘'); }
+    $('#minuteStep').addEventListener('click', () => addMinutes(1));
+    $('#minuteFive').addEventListener('click', () => addMinutes(5));
+    $('#clockReset').addEventListener('click', () => { clockMinute=43; renderClock(); });
+    renderClock();
+
+    function renderPeople() { $('#people').innerHTML = Array.from({length:55}, () => '<span class="item-dot" aria-hidden="true"></span>').join(''); $('#buses').innerHTML=''; $('#busResult').textContent='55 ÷ 8＝？'; }
+    function groupPeople() {
+      $('#buses').innerHTML = Array.from({length:7}, (_,i) => {
+        const filled = i<6 ? 8 : 7;
+        const seats = Array.from({length:8}, (_,j) => `<span class="seat ${j>=filled?'empty':''}" aria-hidden="true"></span>`).join('');
+        return `<div class="group"><strong>第 ${i+1} 輛</strong><div class="seats">${seats}</div><span class="sr-only">${filled} 人</span></div>`;
+      }).join('');
+      $('#busResult').textContent='55 ÷ 8＝6 餘 7；所以需要 7 輛車'; speak($('#busResult').textContent, $('#busResult'));
+    }
+    $('#groupPeople').addEventListener('click', groupPeople); $('#clearGroups').addEventListener('click', renderPeople); renderPeople();
+
+    const areaText = {
+      A:'A＝上方長方形 4×2，加下方三角形 4×2÷2，所以是 12 平方公分。',
+      B:'B＝6 個上方完整格＋2 個左下完整格＋兩個半格合成 1 格，所以是 9 平方公分。',
+      D:'D 是底 4、高 4 的直角三角形。4×4÷2＝8 平方公分。',
+      E:'E＝上排 4 格＋下排 3 格＋右上 1 格，所以是 8 平方公分。'
+    };
+    function selectAreaShape(name, readAloud=true) {
+      $$('.area-choice').forEach(button => {
+        const active = button.dataset.shape === name;
+        button.classList.toggle('secondary', !active); button.setAttribute('aria-pressed', active);
+      });
+      $$('[data-base-shape]').forEach(shape => shape.classList.toggle('selected-shape', shape.dataset.baseShape === name));
+      $$('[data-shape-label]').forEach(label => label.classList.toggle('selected-label', label.dataset.shapeLabel === name));
+      $$('[data-overlay]').forEach(overlay => overlay.classList.toggle('show', overlay.dataset.overlay === name));
+      $('#areaResult').textContent = areaText[name];
+      if (readAloud) {
+        announce(`已用虛線標示 ${name} 圖的每一個單位方格`);
+        speak(areaText[name], $('#areaResult'));
+      }
+    }
+    $$('.area-choice').forEach(button => button.addEventListener('click', () => selectAreaShape(button.dataset.shape, true)));
+    selectAreaShape('A', false);
+
+    const solutionStageLabels = ['1 找線索', '2 想方法', '3 分步做', '4 會檢查', '5 寫答案'];
+    function numberedLines(lines) {
+      const numerals = ['①', '②', '③', '④', '⑤', '⑥'];
+      return lines.map((line, index) => `${numerals[index] || `${index + 1}.`} ${line}`).join('\n');
+    }
+    function solutionStages(question) {
+      return [
+        {
+          title:'先找出題目線索', purpose:'先看懂，不急著算',
+          speech:`題目：${question.q}\n已知：${question.known}\n要找：${question.ask}`,
+          check:'用手指著題目，先說一次「我知道什麼」和「題目要我找什麼」。'
+        },
+        {
+          title:'把抽象題意變成看得見的想法', purpose:'畫圖或想像具體情境',
+          speech:`可以這樣想：${question.picture}\n我要用的方法：${question.plan}`,
+          check:'還沒開始算之前，先用自己的話說出「為什麼選這個方法」。'
+        },
+        {
+          title:'一小步、一小步完成', purpose:'每一行只做一件事',
+          speech:numberedLines(question.work),
+          check:'每做完一行，就回頭對照題目：數字有沒有抄對？單位有沒有跟著寫？'
+        },
+        {
+          title:'用另一種方式檢查', purpose:'發現容易犯的錯',
+          speech:`驗算：${question.verify}\n容易弄錯：${question.myth}`,
+          check:question.selfCheck
+        },
+        {
+          title:'寫出完整答案', purpose:'把答案和單位說清楚',
+          speech:`答案：${question.a}`,
+          check:'把答案遮住，再從「找線索」開始，用自己的話完整說一次。'
+        }
+      ];
+    }
+    function updateSolution(card, question, stepIndex, readAloud=true) {
+      const panel = $('.answer-panel', card), stages = solutionStages(question), stage = stages[stepIndex];
+      panel.dataset.step = stepIndex;
+      $('.solve-step', panel).textContent = `第 ${stepIndex + 1} 步／5`;
+      $('.solve-purpose', panel).textContent = stage.purpose;
+      $('.solve-title', panel).textContent = stage.title;
+      const speechLine = $('.solve-speech', panel);
+      speechLine.classList.toggle('final-answer', stepIndex === 4);
+      paintSpeech(speechLine, stage.speech);
+      const check = $('.solve-check', panel);
+      check.innerHTML = '<strong>換你想一想</strong>';
+      check.append(document.createTextNode(stage.check));
+      $$('.solve-map-step', panel).forEach((button, i) => {
+        button.toggleAttribute('aria-current', i === stepIndex);
+        if (i === stepIndex) button.setAttribute('aria-current', 'step');
+        button.classList.toggle('done', i < stepIndex);
+      });
+      $('.solve-prev', panel).disabled = stepIndex === 0;
+      $('.solve-next', panel).textContent = stepIndex === 4 ? '再從第 1 步練習' : '下一步 →';
+      const finish = () => pulse(stepIndex === 4 ? speechLine : $('.solve-next', panel));
+      if (readAloud) speak(stage.speech, speechLine, finish);
+    }
+    function renderQuestions(filter='all') {
+      const list = questions.filter(q => filter==='all' || q.cat===filter);
+      $('#questionList').innerHTML = list.map((q,i) => `<article class="question-card" data-cat="${q.cat}">
+        <span class="tag">${q.cat}</span><h3>${q.no}</h3><p>${q.q}</p>
+        <button class="answer-button" type="button" aria-expanded="false" aria-controls="answer-${filter}-${i}">展開五步解題與朗讀</button>
+        <div class="answer-panel" id="answer-${filter}-${i}" data-step="0">
+          <div class="solve-head"><span class="solve-step">第 1 步／5</span><span class="solve-purpose">先看懂，不急著算</span></div>
+          <div class="solve-map" role="navigation" aria-label="這一題的五個解題步驟">
+            ${solutionStageLabels.map((label, stageIndex) => `<button class="solve-map-step" type="button" data-solve-stage="${stageIndex}"${stageIndex === 0 ? ' aria-current="step"' : ''}>${label}</button>`).join('')}
+          </div>
+          <h4 class="solve-title">先找出題目線索</h4>
+          <p class="solve-speech" aria-live="polite"></p>
+          <p class="solve-check"></p>
+          <div class="solve-controls">
+            <button class="step-button secondary solve-prev" type="button">← 上一步</button>
+            <button class="step-button solve-listen" type="button">🔊 重聽這一步</button>
+            <button class="step-button solve-next" type="button">下一步 →</button>
+          </div>
+        </div>
+      </article>`).join('');
+
+      $$('.question-card', $('#questionList')).forEach((card, i) => {
+        const start = $('.answer-button', card), panel = $('.answer-panel', card), question = list[i];
+        start.addEventListener('click', () => {
+          const open = !panel.classList.contains('show');
+          $$('.answer-panel.show', $('#questionList')).forEach(p => {
+            p.classList.remove('show'); $('.answer-button', p.parentElement).setAttribute('aria-expanded','false');
+          });
+          if (!open) { stopSpeaking(); return; }
+          panel.classList.add('show'); start.setAttribute('aria-expanded','true'); updateSolution(card, question, 0, true);
+          setTimeout(() => panel.scrollIntoView({behavior:'smooth', block:'center'}), 100);
+        });
+        $('.solve-prev', panel).addEventListener('click', () => updateSolution(card, question, Math.max(0, Number(panel.dataset.step) - 1), true));
+        $('.solve-next', panel).addEventListener('click', () => {
+          const current = Number(panel.dataset.step), next = current === 4 ? 0 : current + 1;
+          updateSolution(card, question, next, true);
+        });
+        $('.solve-listen', panel).addEventListener('click', () => updateSolution(card, question, Number(panel.dataset.step), true));
+        $$('.solve-map-step', panel).forEach(button => button.addEventListener('click', () => updateSolution(card, question, Number(button.dataset.solveStage), true)));
+      });
+    }
+    $$('.filter-button').forEach(b => b.addEventListener('click', () => {
+      $$('.filter-button').forEach(x => x.setAttribute('aria-pressed','false')); b.setAttribute('aria-pressed','true'); renderQuestions(b.dataset.filter);
+    }));
+    renderQuestions();
+  </script>
+</body>
+</html>
